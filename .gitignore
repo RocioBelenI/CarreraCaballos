@@ -1,0 +1,4 @@
+.session_context.md
+*.class
+*~
+.DS_Store
