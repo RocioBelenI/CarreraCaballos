@@ -1,9 +1,9 @@
-package Controllers;
-
-import Models.Carrera;
-import Models.Jugador;
+package controllers;
 
 import java.util.List;
+
+import models.Carrera;
+import models.Jugador;
 
 public class ControllerCaballo {
 

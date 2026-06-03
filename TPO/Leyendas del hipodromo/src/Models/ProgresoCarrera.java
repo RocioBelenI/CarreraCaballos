@@ -1,15 +1,12 @@
-package controllers;
+package models;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
-import models.Carrera;
-import models.Jugador;
-import models.MomentoCarrera;
-import models.ProgresoCarrera;
-
-public class ControllerCarrera {
+public class ProgresoCarrera {
     private final List<MomentoCarrera> momentos;
 
     public ProgresoCarrera(List<MomentoCarrera> momentos) {
@@ -27,5 +24,4 @@ public class ControllerCarrera {
         }
         return new ProgresoCarrera(listaMomentos);
     }
-
 }
