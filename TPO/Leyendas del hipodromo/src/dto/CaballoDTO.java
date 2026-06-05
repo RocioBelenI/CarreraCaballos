@@ -27,5 +27,4 @@ public class CaballoDTO {
     public double getResistencia() { return resistencia; }
     public double getEnergiaActual() { return energiaActual; }
     public double getDistanciaRecorrida() { return distanciaRecorrida; }
-    
 }
