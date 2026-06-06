@@ -2,10 +2,10 @@ package gui.views;
 
 import gui.components.RaceLanePanel;
 
-import controllers.ControllerCarrera;
-import models.MomentoCarrera;
-import models.ProgresoCarrera;
-import controllers.UiController;
+import Controllers.ControllerCarrera;
+import Models.MomentoCarrera;
+import Models.ProgresoCarrera;
+import Controllers.UiController;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -82,8 +82,8 @@ public class RaceAnimationPanel extends JPanel {
 
         players.forEach(name -> {
             String horseName = UiController.getJugadores().stream()
-                    .filter(player -> player.getName().equals(name))
-                    .map(player -> player.getHorse().getName())
+                    .filter(player -> player.getNombre().equals(name))
+                    .map(player -> player.getCaballo().getNombre())
                     .findFirst()
                     .orElse("Caballo");
             RaceLanePanel lane = new RaceLanePanel(name, horseName);

@@ -1,11 +1,10 @@
 package gui.views;
 
-import gui.models.PlayerInfo;
-import gui.dto.PlayerInfo;
+import dto.JugadorDTO;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 
-import controllers.UiController;
+import Controllers.UiController;
 
 import java.awt.*;
 import java.util.Comparator;
@@ -38,11 +37,11 @@ public class ScoresPanel extends JPanel {
     public void refreshScores() {
         tableModel.setRowCount(0);
         UiController.getJugadores().stream()
-                .sorted(Comparator.comparingInt(PlayerInfo::getScore).reversed())
+                .sorted(Comparator.comparingInt(JugadorDTO::getPuntaje).reversed())
                 .forEach(player -> tableModel.addRow(new Object[]{
-                        player.getName(),
-                        player.getHorse().getName(),
-                        player.getScore()
+                        player.getNombre(),
+                        player.getCaballo().getNombre(),
+                        player.getPuntaje()
                 }));
     }
 }

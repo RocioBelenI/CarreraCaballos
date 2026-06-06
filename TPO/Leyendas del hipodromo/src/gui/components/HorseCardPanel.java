@@ -3,31 +3,31 @@ package gui.components;
 import javax.swing.*;
 import javax.swing.border.LineBorder;
 
-import gui.dto.HorseInfo;
+import dto.CaballoDTO;
 
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
 public class HorseCardPanel extends JPanel {
-    private final HorseInfo horse;
+    private final CaballoDTO horse;
     private boolean selected;
 
-    public HorseCardPanel(HorseInfo horse) {
+    public HorseCardPanel(CaballoDTO horse) {
         this.horse = horse;
         setLayout(new BorderLayout(6, 6));
         setBorder(new LineBorder(new Color(148, 163, 184), 1, true));
         setBackground(Color.WHITE);
         setPreferredSize(new Dimension(160, 140));
 
-        JLabel nameLabel = new JLabel(horse.getEmoji() + " " + horse.getName());
+        JLabel nameLabel = new JLabel(horse.getEmoji() + " " + horse.getNombre());
         nameLabel.setFont(nameLabel.getFont().deriveFont(Font.BOLD, 14f));
         add(nameLabel, BorderLayout.NORTH);
 
         JPanel stats = new JPanel(new GridLayout(2, 1, 4, 4));
         stats.setOpaque(false);
-        stats.add(createBar("Velocidad", horse.getSpeed(), new Color(37, 99, 235)));
-        stats.add(createBar("Resistencia", horse.getStamina(), new Color(244, 114, 33)));
+        stats.add(createBar("Velocidad", horse.getVelocidad(), new Color(37, 99, 235)));
+        stats.add(createBar("Resistencia", horse.getResistencia(), new Color(244, 114, 33)));
         add(stats, BorderLayout.CENTER);
 
         addMouseListener(new MouseAdapter() {
@@ -55,7 +55,7 @@ public class HorseCardPanel extends JPanel {
         return panel;
     }
 
-    public HorseInfo getHorse() {
+    public CaballoDTO getHorse() {
         return horse;
     }
 

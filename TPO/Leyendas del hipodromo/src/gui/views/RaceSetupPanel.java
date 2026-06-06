@@ -1,11 +1,10 @@
 package gui.views;
 
 import gui.AppFrame;
-import gui.models.PlayerInfo;
-import gui.dto.PlayerInfo;
+import dto.JugadorDTO;
 import javax.swing.*;
 
-import controllers.UiController;
+import Controllers.UiController;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -73,8 +72,8 @@ public class RaceSetupPanel extends JPanel {
         playerCheckboxPanel.removeAll();
         playerCheckBoxes.clear();
 
-        for (PlayerInfo player : UiController.getJugadores()) {
-            JCheckBox checkbox = new JCheckBox(player.getName() + " — " + player.getHorse().getName());
+        for (JugadorDTO player : UiController.getJugadores()) {
+            JCheckBox checkbox = new JCheckBox(player.getNombre() + " — " + player.getCaballo().getNombre());
             checkbox.setBackground(new Color(248, 250, 252));
             playerCheckboxPanel.add(checkbox);
             playerCheckBoxes.add(checkbox);
@@ -88,7 +87,7 @@ public class RaceSetupPanel extends JPanel {
         List<String> selectedPlayers = new ArrayList<>();
         for (int i = 0; i < playerCheckBoxes.size(); i++) {
             if (playerCheckBoxes.get(i).isSelected()) {
-                selectedPlayers.add(UiController.getJugadores().get(i).getName());
+                selectedPlayers.add(UiController.getJugadores().get(i).getNombre());
             }
         }
 

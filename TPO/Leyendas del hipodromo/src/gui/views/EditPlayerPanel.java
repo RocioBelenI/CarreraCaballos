@@ -1,12 +1,11 @@
 package gui.views;
 
 import gui.components.HorseCardPanel;
-import gui.models.HorseInfo;
-import gui.dto.HorseInfo;
-import gui.dto.PlayerInfo;
+import dto.CaballoDTO;
+import dto.JugadorDTO;
 import javax.swing.*;
 
-import controllers.UiController;
+import Controllers.UiController;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -19,7 +18,7 @@ public class EditPlayerPanel extends JPanel {
     private final JPanel horseGrid;
     private final List<HorseCardPanel> horseCards = new ArrayList<>();
     private final Runnable onPlayersChanged;
-    private HorseInfo selectedHorse;
+    private CaballoDTO selectedHorse;
     private int selectedIndex = -1;
 
     public EditPlayerPanel(Runnable onPlayersChanged) {
@@ -77,7 +76,7 @@ public class EditPlayerPanel extends JPanel {
         horseGrid.removeAll();
         horseCards.clear();
 
-        for (HorseInfo horse : UiController.getCaballosDisponibles()) {
+        for (CaballoDTO horse : UiController.getCaballosDisponibles()) {
             HorseCardPanel card = new HorseCardPanel(horse);
             card.setSelectionListener(() -> selectHorse(card));
             horseCards.add(card);
@@ -94,7 +93,7 @@ public class EditPlayerPanel extends JPanel {
 
     public void refreshPlayerList() {
         listModel.clear();
-        UiController.getJugadores().forEach(player -> listModel.addElement(player.getName() + " — " + player.getHorse().getName()));
+        UiController.getJugadores().forEach(player -> listModel.addElement(player.getNombre() + " — " + player.getCaballo().getNombre()));
     }
 
     private void loadSelectedPlayer() {
@@ -106,10 +105,10 @@ public class EditPlayerPanel extends JPanel {
             return;
         }
 
-        PlayerInfo player = UiController.getJugadores().get(selectedIndex);
-        nameField.setText(player.getName());
-        selectedHorse = player.getHorse();
-        horseCards.forEach(card -> card.setSelected(card.getHorse() == selectedHorse));
+        JugadorDTO player = UiController.getJugadores().get(selectedIndex);
+        nameField.setText(player.getNombre());
+        selectedHorse = player.getCaballo();
+        horseCards.forEach(card -> card.setSelected(card.getHorse().getId().equals(selectedHorse.getId())));
     }
 
     private void saveChanges() {

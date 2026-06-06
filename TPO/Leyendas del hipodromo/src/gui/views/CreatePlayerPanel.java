@@ -1,11 +1,10 @@
 package gui.views;
 
 import gui.components.HorseCardPanel;
-import gui.models.HorseInfo;
-import gui.dto.HorseInfo;
+import dto.CaballoDTO;
 import javax.swing.*;
 
-import controllers.UiController;
+import Controllers.UiController;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -17,7 +16,7 @@ public class CreatePlayerPanel extends JPanel {
     private final DefaultListModel<String> playerListModel;
     private final List<HorseCardPanel> horseCards = new ArrayList<>();
     private final Runnable onPlayersChanged;
-    private HorseInfo selectedHorse;
+    private CaballoDTO selectedHorse;
 
     public CreatePlayerPanel(Runnable onPlayersChanged) {
         this.onPlayersChanged = onPlayersChanged;
@@ -73,7 +72,7 @@ public class CreatePlayerPanel extends JPanel {
     }
 
     private void populateHorseCards() {
-        for (HorseInfo horse : UiController.getCaballosDisponibles()) {
+        for (CaballoDTO horse : UiController.getCaballosDisponibles()) {
             HorseCardPanel card = new HorseCardPanel(horse);
             card.setSelectionListener(() -> selectHorse(card));
             horseCards.add(card);
@@ -108,6 +107,6 @@ public class CreatePlayerPanel extends JPanel {
 
     private void refreshPlayerList() {
         playerListModel.clear();
-        UiController.getJugadores().forEach(player -> playerListModel.addElement(player.getName() + " — " + player.getHorse().getName()));
+        UiController.getJugadores().forEach(player -> playerListModel.addElement(player.getNombre() + " — " + player.getCaballo().getNombre()));
     }
 }
