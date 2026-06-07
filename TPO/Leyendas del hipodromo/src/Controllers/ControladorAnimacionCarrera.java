@@ -1,15 +1,15 @@
-package controllers;
+package Controllers;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import models.MomentoCarrera;
-import models.ProgresoCarrera;
+import Models.MomentoCarrera;
+import Models.ProgresoCarrera;
 
 public class ControladorAnimacionCarrera {
-    
+
     public static ProgresoCarrera crearProgresoCarreraDeMuestra(List<String> jugadores) {
         List<MomentoCarrera> momentos = new ArrayList<>();
         int cantidadJugadores = jugadores.size();
@@ -21,7 +21,7 @@ public class ControladorAnimacionCarrera {
 
             for (int i = 0; i < cantidadJugadores; i++) {
                 // Mantenemos al último caballo como el más rápido para probar
-                int incremento = 10 + (i * 5); 
+                int incremento = 10 + (i * 5);
                 progreso[i] = Math.min(100, progreso[i] + incremento);
                 momento.put(jugadores.get(i), progreso[i]);
 
@@ -33,13 +33,13 @@ public class ControladorAnimacionCarrera {
 
             // Si alguien cruzó la meta, cortamos la animación para que no empaten
             if (alguienLlego) {
-                break; 
+                break;
             }
         }
 
         return new ProgresoCarrera(momentos);
     }
-    
+
     public static ProgresoCarrera crearProgresoCarreraDesdeBackend(List<Map<String, Integer>> momentosBackend) {
         return ProgresoCarrera.desdeListaDeMapas(momentosBackend);
     }

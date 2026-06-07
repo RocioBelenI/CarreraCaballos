@@ -21,17 +21,19 @@
             <artifactId>jakarta.persistence-api</artifactId>
             <version>3.1.0</version>
         </dependency>
+        <!-- Driver JDBC para Microsoft SQL Server (descargado automático por Maven) -->
         <dependency>
-            <groupId>com.mysql</groupId>
-            <artifactId>mysql-connector-j</artifactId>
-            <version>9.0.0</version>
+            <groupId>com.microsoft.sqlserver</groupId>
+            <artifactId>mssql-jdbc</artifactId>
+            <version>12.6.1.jre11</version>
         </dependency>
     </dependencies>
     <build>
         <sourceDirectory>src</sourceDirectory>
         <resources>
+            <!-- persistence.xml y META-INF viven en src/resources -->
             <resource>
-                <directory>src/main/resources</directory>
+                <directory>src/resources</directory>
             </resource>
         </resources>
         <plugins>

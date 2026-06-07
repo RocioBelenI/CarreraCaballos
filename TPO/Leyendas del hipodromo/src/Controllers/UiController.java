@@ -59,6 +59,15 @@ public class UiController {
         return dtos;
     }
 
+    /**
+     * Expone la lista interna de Jugador (con sus Caballos reales del modelo)
+     * para ser usada por ControllerCarrera en la simulación de la carrera.
+     */
+    public static List<Jugador> getJugadoresModelo() {
+        return Collections.unmodifiableList(jugadores);
+    }
+
+
     // TODO: este metodo deberia estar en el controller de jugador, no en el controlador de la UI.
     public static boolean agregarJugador(String nombre, CaballoDTO caballoDTO) {
         if (nombre == null || nombre.isBlank() || caballoDTO == null) {

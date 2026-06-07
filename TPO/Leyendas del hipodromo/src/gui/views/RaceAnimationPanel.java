@@ -2,7 +2,6 @@ package gui.views;
 
 import gui.components.RaceLanePanel;
 
-import Controllers.ControllerCarrera;
 import Models.MomentoCarrera;
 import Models.ProgresoCarrera;
 import Controllers.UiController;
@@ -11,9 +10,10 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Timer;
+import javax.swing.Timer;
 
 import javax.swing.BorderFactory;
+import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -70,8 +70,8 @@ public class RaceAnimationPanel extends JPanel {
         laneMap.clear();
 
         List<String> players = new ArrayList<>();
-        if (!progress.getMoments().isEmpty()) {
-            players.addAll(progress.getMoments().get(0).getProgressByPlayer().keySet());
+        if (!progress.getMomentos().isEmpty()) {
+            players.addAll(progress.getMomentos().get(0).getProgresoPorJugador().keySet());
         }
 
         if (players.isEmpty()) {
@@ -107,7 +107,7 @@ public class RaceAnimationPanel extends JPanel {
     }
 
     private void stepAnimation() {
-        if (raceProgress == null || currentIndex >= raceProgress.getMoments().size()) {
+        if (raceProgress == null || currentIndex >= raceProgress.getMomentos().size()) {
             if (timer != null) {
                 timer.stop();
             }
@@ -116,16 +116,16 @@ public class RaceAnimationPanel extends JPanel {
             return;
         }
 
-        MomentoCarrera moment = raceProgress.getMoments().get(currentIndex);
-        moment.getProgressByPlayer().forEach((player, percent) -> {
+        MomentoCarrera moment = raceProgress.getMomentos().get(currentIndex);
+        moment.getProgresoPorJugador().forEach((player, percent) -> {
             RaceLanePanel lane = laneMap.get(player);
             if (lane != null) {
                 lane.updateProgress(percent);
             }
         });
 
-        if (currentIndex == raceProgress.getMoments().size() - 1) {
-            UiController.asignarPuntaje(moment.getProgressByPlayer());
+        if (currentIndex == raceProgress.getMomentos().size() - 1) {
+            UiController.asignarPuntaje(moment.getProgresoPorJugador());
             onRaceCompleted.run();
         }
         currentIndex++;

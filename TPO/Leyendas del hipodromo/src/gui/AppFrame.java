@@ -3,7 +3,6 @@ package gui;
 import gui.views.CreatePlayerPanel;
 import gui.views.EditPlayerPanel;
 import gui.views.LandingPanel;
-import gui.dto.RaceProgress;
 import gui.views.NavigationPanel;
 import gui.views.RaceAnimationPanel;
 import gui.views.RaceSetupPanel;
@@ -11,12 +10,14 @@ import gui.views.ScoresPanel;
 
 import javax.swing.*;
 
-import Models.RaceProgress;
-import controllers.RaceAnimationController;
-import controllers.UiController;
+import Controllers.ControllerCarrera;
+import Controllers.UiController;
+import Models.Jugador;
+import Models.ProgresoCarrera;
 
 import java.awt.*;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class AppFrame extends JFrame implements NavigationPanel.NavigationListener, LandingPanel.LandingListener {
     public static final String LANDING = "landing";
@@ -36,7 +37,7 @@ public class AppFrame extends JFrame implements NavigationPanel.NavigationListen
     private final ScoresPanel scoresPanel;
 
     public AppFrame() {
-        super("Carrera de Caballos");
+        super("Leyendas del Hipódromo");
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setSize(1024, 720);
         setLocationRelativeTo(null);
@@ -72,7 +73,7 @@ public class AppFrame extends JFrame implements NavigationPanel.NavigationListen
         panel.setBackground(new Color(37, 99, 235));
         panel.setBorder(BorderFactory.createEmptyBorder(12, 16, 12, 16));
 
-        JLabel title = new JLabel("Carrera de Caballos");
+        JLabel title = new JLabel("Leyendas del Hipódromo");
         title.setForeground(Color.WHITE);
         title.setFont(title.getFont().deriveFont(Font.BOLD, 24f));
         panel.add(title, BorderLayout.WEST);
@@ -94,15 +95,36 @@ public class AppFrame extends JFrame implements NavigationPanel.NavigationListen
         cardLayout.show(contentCards, name);
     }
 
-    public void startRace(ProgresoCarrera progress) {
-        UiController.prepareRaceAnimation();
-        raceAnimationPanel.startAnimation(progress);
+    /**
+     * Inicia la animación de la carrera con un ProgresoCarrera ya calculado.
+     * Punto de entrada genérico: el progreso puede venir del ControllerCarrera,
+     * de un backend, o de cualquier otra fuente.
+     */
+    public void startRace(ProgresoCarrera progreso) {
+        raceAnimationPanel.startAnimation(progreso);
         showPanel(RACE_ANIMATION);
     }
 
-    public void startRaceWithPlayers(List<String> selectedPlayers) {
-        ProgresoCarrera progress = RaceAnimationController.createSampleRaceProgress(selectedPlayers);
-        startRace(progress);
+    /**
+     * Orquesta la carrera a partir de los nombres de jugadores seleccionados:
+     * busca los jugadores del modelo, simula la carrera con ControllerCarrera
+     * y delega el inicio de la animación a startRace().
+     * La distancia por defecto es 1200 metros.
+     */
+    public void startRaceWithPlayers(List<String> nombresSeleccionados) {
+        List<Jugador> jugadoresParticipantes = UiController.getJugadoresModelo().stream()
+                .filter(j -> nombresSeleccionados.contains(j.getNombre()))
+                .collect(Collectors.toList());
+
+        if (jugadoresParticipantes.isEmpty()) {
+            JOptionPane.showMessageDialog(this,
+                    "No se encontraron jugadores para iniciar la carrera.",
+                    "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        ProgresoCarrera progreso = ControllerCarrera.simularCarrera(jugadoresParticipantes, 1200);
+        startRace(progreso);
     }
 
     private void onPlayersChanged() {
