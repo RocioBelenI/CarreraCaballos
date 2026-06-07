@@ -2,6 +2,8 @@ package models;
 
 public abstract class Caballo {
     protected String nombre;
+public abstract class Caballo{
+    private String nombre;
     protected double velocidadBase;
     protected double resistencia;
     protected double energiaActual;
@@ -44,6 +46,9 @@ public abstract class Caballo {
             energiaActual -= velocidadBase; 
         }
     }
+
+    public abstract void avanzar();
+    public abstract void reducirEnergia();
     
     public double getDistanciaRecorrida(){
         return distanciaRecorrida;
@@ -55,5 +60,18 @@ public abstract class Caballo {
     
     public double getEnergiaActual() {
         return energiaActual;
+    public double getVelocidadBase() {
+    	
+    	return velocidadBase;
+    }
+    
+    public double getEnergiaActual() {
+    	return energiaActual;
+ 
+    }	
+    
+    public double getResistencia() {
+    	return resistencia;
+    	
     }
 }
