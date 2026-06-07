@@ -1,13 +1,11 @@
 package models;
 
-public class CaballoVeloz extends Caballo{
-    @Override
-    public void avanzar() {
+public class CaballoVeloz extends Caballo {
 
-    }
-
-    @Override
-    public void reducirEnergia() {
-
+    public CaballoVeloz(String nombre) {
+        super(nombre);
+        this.velocidadBase = 16.0;
+        this.resistencia = 400.0;
+        this.penalidadCansancio = 0.25; // Pierde mucho ritmo al cansarse
     }
 }
