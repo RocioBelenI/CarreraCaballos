@@ -3,21 +3,14 @@ package controllers;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
-
-import models.Carrera;
-import models.Jugador;
+import java.util.Map;
 import models.MomentoCarrera;
 import models.ProgresoCarrera;
 
 public class ControllerCarrera {
-    private final List<MomentoCarrera> momentos;
 
-    public ProgresoCarrera(List<MomentoCarrera> momentos) {
-        this.momentos = Collections.unmodifiableList(new ArrayList<>(momentos));
-    }
-
-    public List<MomentoCarrera> getMomentos() {
-        return momentos;
+    public ProgresoCarrera crearProgreso(List<MomentoCarrera> momentos) {
+        return new ProgresoCarrera(momentos);
     }
 
     public static ProgresoCarrera desdeListaDeMapas(List<Map<String, Integer>> mapasDeMomentos) {
@@ -27,5 +20,4 @@ public class ControllerCarrera {
         }
         return new ProgresoCarrera(listaMomentos);
     }
-
 }
