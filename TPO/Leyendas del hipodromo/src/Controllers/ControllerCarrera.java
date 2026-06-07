@@ -13,6 +13,10 @@ import models.ProgresoCarrera;
 
 public class ControllerCarrera {
 
+    public ProgresoCarrera crearProgreso(List<MomentoCarrera> momentos) {
+        return new ProgresoCarrera(momentos);
+    }
+
     // Se asume 800m por defecto para la simulacion, o se puede parametrizar
     public static ProgresoCarrera simularCarrera(List<JugadorDAO> jugadoresDAO, List<CaballoDAO> caballosDAO, int distanciaMeta) {
         List<MomentoCarrera> momentos = new ArrayList<>();
@@ -32,6 +36,9 @@ public class ControllerCarrera {
             corredores.add(modeloCaballo);
             nombresJugadores.add(jugador.getNombre());
         }
+        return new ProgresoCarrera(listaMomentos);
+    }
+}
 
         boolean carreraTerminada = false;
 
