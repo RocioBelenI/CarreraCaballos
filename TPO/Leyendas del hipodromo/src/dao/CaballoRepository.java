@@ -2,16 +2,14 @@ package dao;
 
 import config.JPAUtil;
 import jakarta.persistence.EntityManager;
-import Models.Caballo;
-
 import java.util.List;
 
-public class CaballoRepository extends GenericJpaRepository<Caballo, Long> {
+public class CaballoRepository extends GenericJpaRepository<CaballoDAO, Long> {
 
     private static CaballoRepository instance;
 
     private CaballoRepository() {
-        super(Caballo.class);
+        super(CaballoDAO.class);
     }
 
     public static CaballoRepository getInstance() {
@@ -21,15 +19,16 @@ public class CaballoRepository extends GenericJpaRepository<Caballo, Long> {
         return instance;
     }
 
-    public List<Caballo> listarCaballos() {
+    public List<CaballoDAO> listarCaballos() {
         return listarTodos();
     }
 
-    public Caballo buscarPorNombre(String nombre) {
+    public CaballoDAO buscarPorNombre(String nombre) {
         EntityManager em = JPAUtil.getInstance().crearEntityManager();
         try {
             em.getTransaction().begin();
-            List<Caballo> resultados = em.createQuery("SELECT c FROM Caballo c WHERE c.nombre = :nombre", Caballo.class)
+            // Asegurate de que la query llame a la clase DAO correcta
+            List<CaballoDAO> resultados = em.createQuery("SELECT c FROM CaballoDAO c WHERE c.nombre = :nombre", CaballoDAO.class)
                     .setParameter("nombre", nombre)
                     .getResultList();
             em.getTransaction().commit();
@@ -44,14 +43,15 @@ public class CaballoRepository extends GenericJpaRepository<Caballo, Long> {
     }
 
     public void cargarDatosCaballo() {
-        List<Caballo> caballos = listarCaballos();
+        List<CaballoDAO> caballos = listarCaballos();
         if (!caballos.isEmpty()) {
             return;
         }
 
-        guardar(new Models.CaballoVeloz("veloz", "Relámpago", "⚡", 90, 60));
-        guardar(new Models.CaballoResistente("resistente", "Tormenta", "🌩️", 70, 90));
-        guardar(new Models.CaballoEquilibrado("equilibrado", "Brisa", "🌀", 80, 80));
-        guardar(new Models.CaballoVeloz("fuerte", "Centella", "🔥", 85, 70));
+        // Instanciamos los DAOs, que son los que se guardan en la base de datos
+        guardar(new CaballoDAO("veloz", "Relámpago", "⚡", 90, 60));
+        guardar(new CaballoDAO("resistente", "Tormenta", "🌩️", 70, 90));
+        guardar(new CaballoDAO("equilibrado", "Brisa", "🌀", 80, 80));
+        guardar(new CaballoDAO("fuerte", "Centella", "🔥", 85, 70));
     }
 }

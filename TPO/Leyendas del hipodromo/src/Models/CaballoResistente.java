@@ -1,30 +1,29 @@
-package Models;
+package models;
 
-import jakarta.persistence.DiscriminatorValue;
-import jakarta.persistence.Entity;
-
-@Entity
-@DiscriminatorValue("resistente")
+/**
+ * Modelo de negocio puro para el caballo resistente.
+ * Mantiene un buen ritmo constante a pesar del cansancio.
+ */
 public class CaballoResistente extends Caballo {
 
-    // Constructor vacío requerido por JPA
-    protected CaballoResistente() {
-        super();
-    }
-
-    public CaballoResistente(String codigo, String nombre, String emoji, double velocidadBase, double resistencia) {
-        super(codigo, nombre, emoji, velocidadBase, resistencia);
+    public CaballoResistente(String nombre) {
+        super(nombre);
+        this.velocidadBase = 9.0;
+        this.resistencia = 1500.0;
+        this.penalidadCansancio = 0.60; // Mantiene buen ritmo a pesar del cansancio
     }
 
     @Override
     public void avanzar() {
-        // Avanza a velocidad normal pero mantiene el ritmo constante
-        setDistanciaRecorrida(getDistanciaRecorrida() + getVelocidadBase() * 0.9);
+        double avance = getVelocidadBase() * (getResistencia() / 10); 
+        this.distanciaRecorrida += avance;
+        reducirEnergia();
     }
 
     @Override
     public void reducirEnergia() {
         // Consume energía más lentamente
         setEnergiaActual(getEnergiaActual() - (getVelocidadBase() * 0.05));
+        this.energiaActual -= (10 / getResistencia()); 
     }
 }

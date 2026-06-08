@@ -1,9 +1,9 @@
-package Controllers;
+package controllers;
 
-import Models.Caballo;
-import Models.Jugador;
-import Models.MomentoCarrera;
-import Models.ProgresoCarrera;
+import models.Caballo;
+import models.Jugador;
+import models.MomentoCarrera;
+import models.ProgresoCarrera;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -17,51 +17,51 @@ import java.util.Map;
  */
 public class ControllerCarrera {
 
-    private static final int PASOS_MAXIMOS = 15;
-
     /**
      * Simula una carrera entre los jugadores dados y devuelve el progreso
      * con todos los momentos (snapshots) de la carrera.
      *
      * @param jugadores      Lista de jugadores que participan en la carrera.
-     * @param distanciaTotal Distancia total de la carrera en metros.
+     * @param distanciaMeta  Distancia total de la carrera en metros.
      * @return ProgresoCarrera con los momentos de la simulación.
      */
-    public static ProgresoCarrera simularCarrera(List<Jugador> jugadores, double distanciaTotal) {
+    public static ProgresoCarrera simularCarrera(List<Jugador> jugadores, double distanciaMeta) {
         List<MomentoCarrera> momentos = new ArrayList<>();
 
-        // Resetear estado de simulación de cada caballo antes de empezar
+        // 1. Preparar el estado de simulación de cada caballo antes de empezar
         for (Jugador jugador : jugadores) {
-            Caballo caballo = jugador.getCaballo();
-            caballo.setDistanciaRecorrida(0);
-            caballo.setEnergiaActual(caballo.getResistencia());
+            jugador.getCaballo().prepararParaCarrera();
         }
 
         boolean carreraTerminada = false;
 
-        for (int paso = 0; paso < PASOS_MAXIMOS && !carreraTerminada; paso++) {
-            Map<String, Integer> snapshot = new LinkedHashMap<>();
+        // 2. Bucle de Simulación por turnos
+        while (!carreraTerminada) {
+            Map<String, Integer> progresoTurno = new LinkedHashMap<>();
+            boolean alguienCruzoMeta = false;
 
             for (Jugador jugador : jugadores) {
                 Caballo caballo = jugador.getCaballo();
 
-                // Solo avanza si tiene energía
-                if (caballo.getEnergiaActual() > 0) {
-                    caballo.avanzar();
-                    caballo.reducirEnergia();
-                }
-
-                // Calcular porcentaje de distancia recorrida (0–100)
-                int porcentaje = (int) Math.min(100,
-                        (caballo.getDistanciaRecorrida() / distanciaTotal) * 100);
-                snapshot.put(jugador.getNombre(), porcentaje);
+                // El caballo avanza y se cansa según su tipo (Veloz, Resistente, Equilibrado)
+                caballo.avanzar();
+                
+                // Convertir la distancia en porcentaje (0 a 100)
+                double distancia = caballo.getDistanciaRecorrida();
+                int porcentaje = (int) Math.min(100, (distancia / distanciaMeta) * 100);
+                progresoTurno.put(jugador.getNombre(), porcentaje);
 
                 if (porcentaje >= 100) {
-                    carreraTerminada = true;
+                    alguienCruzoMeta = true; // ¡Tenemos un ganador!
                 }
             }
 
-            momentos.add(new MomentoCarrera(snapshot));
+            // Guardamos la foto del momento actual para la animación
+            momentos.add(new MomentoCarrera(progresoTurno));
+
+            if (alguienCruzoMeta) {
+                carreraTerminada = true;
+            }
         }
 
         return new ProgresoCarrera(momentos);

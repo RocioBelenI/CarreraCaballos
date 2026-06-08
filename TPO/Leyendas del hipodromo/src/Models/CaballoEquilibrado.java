@@ -1,29 +1,34 @@
-package Models;
+package models;
 
-import jakarta.persistence.DiscriminatorValue;
-import jakarta.persistence.Entity;
-
-@Entity
-@DiscriminatorValue("equilibrado")
+/**
+ * Modelo de negocio puro para el caballo equilibrado.
+ * Balance perfecto entre velocidad y resistencia.
+ */
 public class CaballoEquilibrado extends Caballo {
 
-    // Constructor vacío requerido por JPA
-    protected CaballoEquilibrado() {
-        super();
-    }
-
-    public CaballoEquilibrado(String codigo, String nombre, String emoji, double velocidadBase, double resistencia) {
-        super(codigo, nombre, emoji, velocidadBase, resistencia);
+    public CaballoEquilibrado(String nombre) {
+        super(nombre);
+        this.velocidadBase = 12.0;
+        this.resistencia = 800.0;
+        this.penalidadCansancio = 0.40; // Mantiene un buen balance al cansarse
     }
 
     @Override
     public void avanzar() {
-        // Velocidad y consumo equilibrados
-        setDistanciaRecorrida(getDistanciaRecorrida() + getVelocidadBase() * 1.0);
+        // Fórmula de avance según energía actual
+        double avance = getVelocidadBase() * (getEnergiaActual() / 100);
+        this.distanciaRecorrida += avance;
+        reducirEnergia();
     }
 
     @Override
     public void reducirEnergia() {
         setEnergiaActual(getEnergiaActual() - (getVelocidadBase() * 0.10));
+
+        if (this.energiaActual > 0) {
+            this.energiaActual -= 5; 
+        } else {
+            this.energiaActual = 0;
+        }
     }
 }
