@@ -1,94 +1,80 @@
 package controllers;
 
+import dao.JugadorRepository;
+import dao.JugadorDAO;
+import dto.CaballoDTO;
+import dto.JugadorDTO;
+import models.Jugador;
+
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import data.dao.CaballoDAO;
-import data.dao.JugadorDAO;
-
-import data.CaballoRepository;
-import data.JugadorRepository;
-
+/**
+ * Actúa como puente entre la Interfaz Gráfica (UI) y la lógica del juego/base de datos.
+ */
 public class UiController {
-    private static final List<CaballoDAO> caballos = new ArrayList<>();
-    private static final List<JugadorDAO> jugadores = new ArrayList<>();
 
-    static {
-        new CaballoRepository().cargarDatosCaballo();
-        caballos.addAll(new CaballoRepository().listarCaballos());
+    private static final ControllerCaballo controllerCaballo = new ControllerCaballo();
+    private static final ControllerJugador controllerJugador = new ControllerJugador();
+    private static final JugadorRepository jugadorRepo = JugadorRepository.getInstance();
+
+    // --- MÉTODOS PARA LA INTERFAZ GRÁFICA (Solo DTOs) ---
+
+    public static List<CaballoDTO> getCaballosDisponiblesParaUI() {
+        return controllerCaballo.listarCaballosParaUI();
     }
 
-    public static List<CaballoDAO> getCaballosDisponibles() {
-        return Collections.unmodifiableList(caballos);
+    public static List<JugadorDTO> getJugadoresParaUI() {
+        return controllerJugador.listarJugadoresParaUI();
     }
 
-    public static List<JugadorDAO> getJugadores() {
-        return Collections.unmodifiableList(jugadores);
+    public static boolean agregarJugador(String nombre, String caballoId) {
+        return controllerJugador.agregarJugador(nombre, caballoId);
     }
 
-    //TODO: este metodo deberia estar en el controller de jugador, no en el controlador de la UI.
-    public static boolean agregarJugador(String nombre, CaballoDAO caballo) {
-        if (nombre == null || nombre.isBlank() || caballo == null) {
-            return false;
-        }
-        JugadorDAO jugadorDAO = new JugadorDAO();
-        jugadorDAO.setNombre(nombre.trim());
-        jugadorDAO.setCaballo(caballo.getId());
-
-        new JugadorRepository().guardarJugador(jugadorDAO);
-        recargarJugadores(); 
-
-        return true;
-    }
-
-    //TODO: este metodo deberia estar en el controller de jugador, no en el controlador de la UI.
-    public static void actualizarJugador(int index, String nombre, CaballoDAO caballo) {
-        if (index < 0 || index >= jugadores.size()) {
-            return;
-        }
+    public static void actualizarJugador(int index, String nombre, String caballoId) {
+        // Buscamos el jugador en la base de datos según su posición en la lista
+        List<JugadorDAO> jugadoresDB = jugadorRepo.listarJugadores();
         
-        JugadorDAO jugadorDAO = jugadores.get(index);
-        jugadorDAO.setNombre(nombre.trim());
-        jugadorDAO.setCaballo(caballo.getId());
-        new JugadorRepository().guardarJugador(jugadorDAO);
-        recargarJugadores();
+        if (index >= 0 && index < jugadoresDB.size()) {
+            JugadorDAO jugadorDAO = jugadoresDB.get(index);
+            jugadorDAO.setNombre(nombre);
+            
+            try {
+                jugadorDAO.setCaballoId(Long.parseLong(caballoId));
+                jugadorRepo.guardarJugador(jugadorDAO); // Guardamos el DAO en la BD
+            } catch (NumberFormatException e) {
+                System.err.println("Error: El ID del caballo no es un número válido.");
+            }
+        }
     }
 
-    //TODO: este metodo deberia estar en el controller de jugador, no en el controlador de la UI.
-    private static void recargarJugadores() {
-        jugadores.clear();
-        jugadores.addAll(new JugadorRepository().listarJugadores());
+    // --- MÉTODOS PARA EL MOTOR DE SIMULACIÓN (Modelos Puros) ---
+
+    public static List<Jugador> getJugadoresModelo() {
+        List<Jugador> modelos = new ArrayList<>();
+        List<JugadorDAO> daos = jugadorRepo.listarJugadores();
+        
+        // Convertimos los DAOs de la base de datos a modelos puros interactivos
+        for (JugadorDAO dao : daos) {
+            modelos.add(controllerJugador.crearJugadorDesdeDAO(dao));
+        }
+        return modelos;
     }
 
-    // TODO: este metodo tiene que estar en el controller de la carrera, no en el controlador de la UI.
-    public static void asignarPuntaje(Map<String, Integer> finalProgress) {
-        Map<String, Integer> resultScore = new LinkedHashMap<>();
-        finalProgress.entrySet().stream()
-                .sorted((a, b) -> Integer.compare(b.getValue(), a.getValue()))
-                .forEachOrdered(entry -> resultScore.put(entry.getKey(), entry.getValue()));
+    public static void asignarPuntaje(Map<String, Integer> progresoPorJugador) {
+        List<JugadorDAO> jugadores = jugadorRepo.listarJugadores();
 
-        int posicion = 1;
-
-        for (String name : resultScore.keySet()) {
-            JugadorDAO player = jugadores.stream()
-                    .filter(p -> p.getNombre().equals(name))
-                    .findFirst()
-                    .orElse(null);
-                    
-            if (player != null) {
-                int currentPoints = player.getPuntaje();
-                if (posicion == 1) {
-                    player.setPuntaje(currentPoints + 100);
-                } else if (posicion == 2) {
-                    player.setPuntaje(currentPoints + 50);
-                } else {
-                    player.setPuntaje(currentPoints + 10);
-                }
+        // Le damos 10 puntos al jugador o jugadores que hayan llegado a la meta (100%)
+        for (JugadorDAO dao : jugadores) {
+            if (progresoPorJugador.containsKey(dao.getNombre())) {
+                int porcentaje = progresoPorJugador.get(dao.getNombre());
                 
-                posicion++; // Sumamos 1 a la posición para el siguiente jugador en el bucle
+                if (porcentaje >= 100) {
+                    dao.setPuntaje(dao.getPuntaje() + 10); 
+                    jugadorRepo.guardarJugador(dao); // Actualizamos la base de datos
+                }
             }
         }
     }

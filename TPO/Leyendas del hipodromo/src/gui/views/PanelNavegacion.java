@@ -10,7 +10,6 @@ import java.util.Map;
 
 public class PanelNavegacion extends JPanel implements ActionListener {
     
-    // Esta es la interfaz que ya implementamos en el AppFrame
     public interface ListenerNavegacion {
         void alNavegar(String destino);
     }
@@ -24,7 +23,6 @@ public class PanelNavegacion extends JPanel implements ActionListener {
         setBorder(BorderFactory.createEmptyBorder(16, 12, 16, 12));
         setBackground(new Color(226, 232, 240));
 
-        // Actualizamos a las constantes en español que definimos en AppFrame
         add(crearBotonNav("Crear jugadores", AppFrame.CREAR_JUGADOR));
         add(crearBotonNav("Editar jugadores", AppFrame.EDITAR_JUGADOR));
         add(crearBotonNav("Iniciar carrera", AppFrame.CONFIGURACION_CARRERA));

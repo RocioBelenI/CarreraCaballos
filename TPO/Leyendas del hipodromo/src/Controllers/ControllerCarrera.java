@@ -1,44 +1,37 @@
 package controllers;
 
+import models.Caballo;
+import models.Jugador;
+import models.MomentoCarrera;
+import models.ProgresoCarrera;
+
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import data.dao.CaballoDAO;
-import data.dao.JugadorDAO;
-import models.Caballo;
-import models.MomentoCarrera;
-import models.ProgresoCarrera;
-
+/**
+ * Controller que orquesta la simulación de una carrera.
+ * Usa los métodos de comportamiento de cada Caballo (avanzar/reducirEnergia)
+ * para calcular el progreso real de la carrera paso a paso.
+ */
 public class ControllerCarrera {
 
-    public ProgresoCarrera crearProgreso(List<MomentoCarrera> momentos) {
-        return new ProgresoCarrera(momentos);
-    }
-
-    // Se asume 800m por defecto para la simulacion, o se puede parametrizar
-    public static ProgresoCarrera simularCarrera(List<JugadorDAO> jugadoresDAO, List<CaballoDAO> caballosDAO, int distanciaMeta) {
+    /**
+     * Simula una carrera entre los jugadores dados y devuelve el progreso
+     * con todos los momentos (snapshots) de la carrera.
+     *
+     * @param jugadores      Lista de jugadores que participan en la carrera.
+     * @param distanciaMeta  Distancia total de la carrera en metros.
+     * @return ProgresoCarrera con los momentos de la simulación.
+     */
+    public static ProgresoCarrera simularCarrera(List<Jugador> jugadores, double distanciaMeta) {
         List<MomentoCarrera> momentos = new ArrayList<>();
-        List<Caballo> corredores = new ArrayList<>();
-        List<String> nombresJugadores = new ArrayList<>();
 
-        // 1. Instanciar caballos y asociarlos al jugador
-        for (JugadorDAO jugador : jugadoresDAO) {
-            // Buscamos el caballo DAO correspondiente
-            CaballoDAO cabDAO = caballosDAO.stream()
-                .filter(c -> c.getId().equals(jugador.getCaballo()))
-                .findFirst()
-                .orElse(null);
-
-            Caballo modeloCaballo = ControllerCaballo.crearCaballoDesdeDAO(cabDAO);
-            modeloCaballo.prepararParaCarrera();
-            corredores.add(modeloCaballo);
-            nombresJugadores.add(jugador.getNombre());
+        // 1. Preparar el estado de simulación de cada caballo antes de empezar
+        for (Jugador jugador : jugadores) {
+            jugador.getCaballo().prepararParaCarrera();
         }
-        return new ProgresoCarrera(listaMomentos);
-    }
-}
 
         boolean carreraTerminada = false;
 
@@ -47,24 +40,23 @@ public class ControllerCarrera {
             Map<String, Integer> progresoTurno = new LinkedHashMap<>();
             boolean alguienCruzoMeta = false;
 
-            for (int i = 0; i < corredores.size(); i++) {
-                Caballo caballo = corredores.get(i);
-                String nombreJugador = nombresJugadores.get(i);
+            for (Jugador jugador : jugadores) {
+                Caballo caballo = jugador.getCaballo();
 
-                // El caballo avanza y se cansa
+                // El caballo avanza y se cansa según su tipo (Veloz, Resistente, Equilibrado)
                 caballo.avanzar();
-                caballo.reducirEnergia();
-
+                
                 // Convertir la distancia en porcentaje (0 a 100)
                 double distancia = caballo.getDistanciaRecorrida();
                 int porcentaje = (int) Math.min(100, (distancia / distanciaMeta) * 100);
-                progresoTurno.put(nombreJugador, porcentaje);
+                progresoTurno.put(jugador.getNombre(), porcentaje);
 
                 if (porcentaje >= 100) {
                     alguienCruzoMeta = true; // ¡Tenemos un ganador!
                 }
             }
 
+            // Guardamos la foto del momento actual para la animación
             momentos.add(new MomentoCarrera(progresoTurno));
 
             if (alguienCruzoMeta) {
@@ -74,20 +66,4 @@ public class ControllerCarrera {
 
         return new ProgresoCarrera(momentos);
     }
-    
-    /* 
-     * Sugerencia de Integración en la Interfaz (UI) - AppFrame.java
-     * -------------------------------------------------------------
-     * public void startRaceWithPlayers(List<String> selectedPlayers) {
-     *     List<data.dao.JugadorDAO> todosJugadores = controllers.UiController.getJugadores();
-     *     List<data.dao.CaballoDAO> todosCaballos = controllers.UiController.getCaballosDisponibles();
-     *      
-     *     List<data.dao.JugadorDAO> participantes = todosJugadores.stream()
-     *         .filter(j -> selectedPlayers.contains(j.getNombre()))
-     *         .collect(java.util.stream.Collectors.toList());
-     *
-     *     models.ProgresoCarrera progress = controllers.ControllerCarrera.simularCarrera(participantes, todosCaballos, 800);
-     *     startRace(progress);
-     * }
-     */
 }

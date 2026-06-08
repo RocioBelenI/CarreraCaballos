@@ -1,9 +1,11 @@
 package models;
 
+/**
+ * Clase base del modelo de dominio para la simulación de la carrera.
+ * Libre de anotaciones de base de datos (JPA).
+ */
 public abstract class Caballo {
     protected String nombre;
-public abstract class Caballo{
-    private String nombre;
     protected double velocidadBase;
     protected double resistencia;
     protected double energiaActual;
@@ -32,46 +34,37 @@ public abstract class Caballo{
         }
     }
 
-    public void avanzar() {
-        // Corre a velocidadBase hasta que se cansa (energia <= 0), luego aplica penalidad
-        double factorCansancio = (energiaActual > 0) ? 1.0 : penalidadCansancio;
-        
-        // Fórmula de Avance por turno
-        double avanceTurno = velocidadBase * factorCansancio * motivacion;
-        distanciaRecorrida += avanceTurno;
-    }
-
-    public void reducirEnergia() {
-        if (energiaActual > 0) {
-            energiaActual -= velocidadBase; 
-        }
-    }
-
+    // Métodos de comportamiento de la carrera que implementarán los hijos
     public abstract void avanzar();
     public abstract void reducirEnergia();
-    
-    public double getDistanciaRecorrida(){
-        return distanciaRecorrida;
+
+    // --- Getters y Setters ---
+
+    public String getNombre() { 
+        return nombre; 
     }
     
-    public String getNombre(){
-        return nombre;
+    public double getVelocidadBase() { 
+        return velocidadBase; 
     }
     
-    public double getEnergiaActual() {
-        return energiaActual;
-    public double getVelocidadBase() {
-    	
-    	return velocidadBase;
+    public double getResistencia() { 
+        return resistencia; 
     }
     
-    public double getEnergiaActual() {
-    	return energiaActual;
- 
-    }	
+    public double getEnergiaActual() { 
+        return energiaActual; 
+    }
     
-    public double getResistencia() {
-    	return resistencia;
-    	
+    public void setEnergiaActual(double energiaActual) { 
+        this.energiaActual = energiaActual; 
+    }
+    
+    public double getDistanciaRecorrida() { 
+        return distanciaRecorrida; 
+    }
+    
+    public void setDistanciaRecorrida(double distanciaRecorrida) { 
+        this.distanciaRecorrida = distanciaRecorrida; 
     }
 }

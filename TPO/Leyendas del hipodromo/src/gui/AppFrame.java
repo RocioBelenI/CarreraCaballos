@@ -2,22 +2,22 @@ package gui;
 
 import gui.views.PanelCrearJugador;
 import gui.views.PanelEditarJugador;
-import gui.views.PanelInicio; // Asumiendo que traducirás LandingPanel
-import gui.views.PanelNavegacion; // Asumiendo que traducirás NavigationPanel
+import gui.views.PanelInicio;
+import gui.views.PanelNavegacion;
 import gui.views.PanelAnimacionCarrera;
 import gui.views.PanelConfiguracionCarrera;
-import gui.views.PanelPuntajes; // Asumiendo que traducirás ScoresPanel
+import gui.views.PanelPuntajes;
+
+import controllers.ControllerCarrera;
+import controllers.UiController;
+import models.ProgresoCarrera;
+import models.Jugador;
 
 import javax.swing.*;
-
-import models.ProgresoCarrera;
-import controllers.ControllerCarrera; // Adaptado según los controladores que vimos
-import controllers.UiController;
-
 import java.awt.*;
 import java.util.List;
+import java.util.stream.Collectors;
 
-// Asumimos que vas a traducir las interfaces de los paneles también
 public class AppFrame extends JFrame implements PanelNavegacion.ListenerNavegacion, PanelInicio.ListenerInicio {
     public static final String INICIO = "inicio";
     public static final String CREAR_JUGADOR = "crearJugador";
@@ -36,7 +36,7 @@ public class AppFrame extends JFrame implements PanelNavegacion.ListenerNavegaci
     private final PanelPuntajes panelPuntajes;
 
     public AppFrame() {
-        super("Carrera de Caballos");
+        super("Leyendas del Hipódromo");
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setSize(1024, 720);
         setLocationRelativeTo(null);
@@ -58,8 +58,10 @@ public class AppFrame extends JFrame implements PanelNavegacion.ListenerNavegaci
         panelContenedor.add(panelEditarJugador, EDITAR_JUGADOR);
         panelConfiguracionCarrera = new PanelConfiguracionCarrera(this);
         panelContenedor.add(panelConfiguracionCarrera, CONFIGURACION_CARRERA);
+        
         panelAnimacionCarrera = new PanelAnimacionCarrera(this::alCompletarCarrera, () -> mostrarPanel(CONFIGURACION_CARRERA));
         panelContenedor.add(panelAnimacionCarrera, ANIMACION_CARRERA);
+        
         panelPuntajes = new PanelPuntajes();
         panelContenedor.add(panelPuntajes, PUNTAJES);
 
@@ -72,7 +74,7 @@ public class AppFrame extends JFrame implements PanelNavegacion.ListenerNavegaci
         panel.setBackground(new Color(37, 99, 235));
         panel.setBorder(BorderFactory.createEmptyBorder(12, 16, 12, 16));
 
-        JLabel titulo = new JLabel("Carrera de Caballos");
+        JLabel titulo = new JLabel("Leyendas del Hipódromo - Carrera de Caballos");
         titulo.setForeground(Color.WHITE);
         titulo.setFont(titulo.getFont().deriveFont(Font.BOLD, 24f));
         panel.add(titulo, BorderLayout.WEST);
@@ -94,22 +96,34 @@ public class AppFrame extends JFrame implements PanelNavegacion.ListenerNavegaci
         cardLayout.show(panelContenedor, nombre);
     }
 
-    public void iniciarCarrera(ProgresoCarrera progreso) {
-        UiController.prepararAnimacionCarrera(); // Asegurate de traducir esto en tu UiController
+    /**
+     * Orquesta la carrera a partir de los nombres de jugadores seleccionados:
+     * busca los jugadores del modelo, simula la carrera con ControllerCarrera
+     * y delega el inicio de la animación.
+     */
+    public void iniciarCarreraConJugadores(List<String> nombresSeleccionados) {
+        List<Jugador> jugadoresParticipantes = UiController.getJugadoresModelo().stream()
+                .filter(j -> nombresSeleccionados.contains(j.getNombre()))
+                .collect(Collectors.toList());
+
+        if (jugadoresParticipantes.isEmpty()) {
+            JOptionPane.showMessageDialog(this,
+                    "No se encontraron jugadores para iniciar la carrera.",
+                    "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        // Se simula la carrera completa antes de animarla (Distancia por defecto: 1200m)
+        ProgresoCarrera progreso = ControllerCarrera.simularCarrera(jugadoresParticipantes, 1200);
+        
         panelAnimacionCarrera.iniciarAnimacion(progreso);
         mostrarPanel(ANIMACION_CARRERA);
-    }
-
-    public void iniciarCarreraConJugadores(List<String> jugadoresSeleccionados) {
-        // Acá actualicé RaceAnimationController por ControllerCarrera según los archivos que me mostraste antes.
-        ProgresoCarrera progreso = ControllerCarrera.crearProgreso(jugadoresSeleccionados);
-        iniciarCarrera(progreso);
     }
 
     private void alCambiarJugadores() {
         panelConfiguracionCarrera.actualizarListaJugadores();
         panelEditarJugador.actualizarListaJugadores();
-        panelPuntajes.actualizarPuntajes(); // Asumo que el método de ScoresPanel se traducirá así
+        panelPuntajes.actualizarPuntajes();
     }
 
     private void alCompletarCarrera() {

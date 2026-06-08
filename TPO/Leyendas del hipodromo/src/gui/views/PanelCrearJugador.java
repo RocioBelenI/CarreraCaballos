@@ -1,13 +1,16 @@
 package gui.views;
 
 import gui.components.PanelTarjetaCaballo;
-import data.dao.CaballoDAO;
+import dto.CaballoDTO;
+import dto.JugadorDTO;
 import controllers.UiController;
 
 import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class PanelCrearJugador extends JPanel {
     private final JTextField campoNombre;
@@ -15,7 +18,7 @@ public class PanelCrearJugador extends JPanel {
     private final DefaultListModel<String> modeloListaJugadores;
     private final List<PanelTarjetaCaballo> tarjetasCaballos = new ArrayList<>();
     private final Runnable alCambiarJugadores;
-    private CaballoDAO caballoSeleccionado;
+    private CaballoDTO caballoSeleccionado; // Cambiado a DTO para no atar la UI a la BD
 
     public PanelCrearJugador(Runnable alCambiarJugadores) {
         this.alCambiarJugadores = alCambiarJugadores;
@@ -71,7 +74,8 @@ public class PanelCrearJugador extends JPanel {
     }
 
     private void cargarTarjetasCaballos() {
-        for (CaballoDAO caballo : UiController.getCaballosDisponibles()) {
+        // Pedimos los DTOs al controlador
+        for (CaballoDTO caballo : UiController.getCaballosDisponiblesParaUI()) {
             PanelTarjetaCaballo tarjeta = new PanelTarjetaCaballo(caballo);
             tarjeta.setListenerSeleccion(() -> seleccionarCaballo(tarjeta));
             tarjetasCaballos.add(tarjeta);
@@ -92,10 +96,13 @@ public class PanelCrearJugador extends JPanel {
             JOptionPane.showMessageDialog(this, "Selecciona un caballo antes de crear el jugador.", "Falta información", JOptionPane.WARNING_MESSAGE);
             return;
         }
-        if (!UiController.agregarJugador(nombre, caballoSeleccionado)) {
+        
+        // Pasamos solo el ID del caballo al Controller para mantener la arquitectura limpia
+        if (!UiController.agregarJugador(nombre, caballoSeleccionado.getId())) {
             JOptionPane.showMessageDialog(this, "Ingresa un nombre válido para el jugador.", "Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
+        
         campoNombre.setText("");
         actualizarListaJugadores();
         if (alCambiarJugadores != null) {
@@ -104,21 +111,17 @@ public class PanelCrearJugador extends JPanel {
         JOptionPane.showMessageDialog(this, "Jugador creado correctamente.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
     }
 
-private void actualizarListaJugadores() {
+    private void actualizarListaJugadores() {
         modeloListaJugadores.clear();
-        List<CaballoDAO> caballos = UiController.getCaballosDisponibles();
         
-        java.util.Map<Long, String> mapaCaballos = new java.util.HashMap<>();
-        for (CaballoDAO caballo : caballos) {
+        Map<String, String> mapaCaballos = new HashMap<>();
+        for (CaballoDTO caballo : UiController.getCaballosDisponiblesParaUI()) {
             mapaCaballos.put(caballo.getId(), caballo.getNombre()); 
         }
         
-        // 2. Iteramos sobre los jugadores usando el mapa para buscar el nombre
-        UiController.getJugadores().forEach(jugador -> {
-            // Buscamos el nombre del caballo por su ID. Si no lo encuentra, pone un texto por defecto.
+        for (JugadorDTO jugador : UiController.getJugadoresParaUI()) {
             String nombreCaballo = mapaCaballos.getOrDefault(jugador.getCaballoId(), "Desconocido");
-            
             modeloListaJugadores.addElement(jugador.getNombre() + " — " + nombreCaballo);
-        });
+        }
     }
 }

@@ -1,11 +1,11 @@
 package gui.views;
 
-import data.dao.JugadorDAO;
-import javax.swing.*;
-import javax.swing.table.DefaultTableModel;
-
+import dto.CaballoDTO;
+import dto.JugadorDTO;
 import controllers.UiController;
 
+import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -39,15 +39,15 @@ public class PanelPuntajes extends JPanel {
     public void actualizarPuntajes() {
         modeloTabla.setRowCount(0); // Limpia la tabla antes de volver a llenarla
 
-        // 1. Creamos el diccionario (Map) relacionando ID -> Nombre del caballo
-        Map<Long, String> mapaCaballos = new HashMap<>();
-        for (var caballo : UiController.getCaballosDisponibles()) {
+        // 1. Creamos el diccionario (Map) relacionando ID -> Nombre del caballo usando DTOs
+        Map<String, String> mapaCaballos = new HashMap<>();
+        for (CaballoDTO caballo : UiController.getCaballosDisponiblesParaUI()) {
             mapaCaballos.put(caballo.getId(), caballo.getNombre());
         }
 
-        // 2. Traemos a los jugadores, los ordenamos por puntaje de mayor a menor y los agregamos
-        UiController.getJugadores().stream()
-                .sorted(Comparator.comparingInt(JugadorDAO::getPuntaje).reversed())
+        // 2. Traemos a los jugadores (DTOs), los ordenamos por puntaje de mayor a menor y los agregamos
+        UiController.getJugadoresParaUI().stream()
+                .sorted(Comparator.comparingInt(JugadorDTO::getPuntaje).reversed())
                 .forEach(jugador -> {
                     // Buscamos el nombre del caballo en el diccionario
                     String nombreCaballo = mapaCaballos.getOrDefault(jugador.getCaballoId(), "Desconocido");

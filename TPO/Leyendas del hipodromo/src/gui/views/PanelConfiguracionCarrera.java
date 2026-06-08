@@ -1,13 +1,16 @@
 package gui.views;
 
 import gui.AppFrame;
-import javax.swing.*;
-
+import dto.CaballoDTO;
+import dto.JugadorDTO;
 import controllers.UiController;
 
+import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class PanelConfiguracionCarrera extends JPanel {
     private final AppFrame ventanaPrincipal;
@@ -67,22 +70,20 @@ public class PanelConfiguracionCarrera extends JPanel {
         actualizarListaJugadores();
     }
 
-public void actualizarListaJugadores() {
+    public void actualizarListaJugadores() {
         panelCheckboxesJugadores.removeAll();
         checkboxesJugadores.clear();
 
-        // 1. Creamos el diccionario (Map) relacionando el ID del caballo con su Nombre
-        java.util.Map<Long, String> mapaCaballos = new java.util.HashMap<>();
-        for (var caballo : UiController.getCaballosDisponibles()) {
+        // Creamos el diccionario relacionando el ID (String) del caballo con su Nombre usando los DTOs
+        Map<String, String> mapaCaballos = new HashMap<>();
+        for (CaballoDTO caballo : UiController.getCaballosDisponiblesParaUI()) {
             mapaCaballos.put(caballo.getId(), caballo.getNombre());
         }
 
-        // 2. Iteramos sobre los jugadores para armar los checkboxes
-        for (var jugador : UiController.getJugadores()) {
-            // Buscamos el nombre del caballo en nuestro mapa usando el ID que tiene el jugador
+        // Iteramos sobre los jugadores usando los DTOs para armar los checkboxes
+        for (JugadorDTO jugador : UiController.getJugadoresParaUI()) {
             String nombreCaballo = mapaCaballos.getOrDefault(jugador.getCaballoId(), "Desconocido");
             
-            // Armamos el texto del checkbox con ambos datos correctos
             JCheckBox checkbox = new JCheckBox(jugador.getNombre() + " — " + nombreCaballo);
             checkbox.setBackground(new Color(248, 250, 252));
             
@@ -96,9 +97,11 @@ public void actualizarListaJugadores() {
 
     private void iniciarCarrera() {
         List<String> jugadoresSeleccionados = new ArrayList<>();
+        List<JugadorDTO> todosLosJugadores = UiController.getJugadoresParaUI();
+
         for (int i = 0; i < checkboxesJugadores.size(); i++) {
             if (checkboxesJugadores.get(i).isSelected()) {
-                jugadoresSeleccionados.add(UiController.getJugadores().get(i).getNombre());
+                jugadoresSeleccionados.add(todosLosJugadores.get(i).getNombre());
             }
         }
 
@@ -107,7 +110,6 @@ public void actualizarListaJugadores() {
             return;
         }
 
-        // Asumo que traducirás este método dentro de AppFrame también
         ventanaPrincipal.iniciarCarreraConJugadores(jugadoresSeleccionados); 
     }
 }

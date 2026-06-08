@@ -4,10 +4,10 @@ public class CaballoDTO {
     private final String id;
     private final String nombre;
     private final String emoji;
-    private final double velocidadBase; // Cambiado a double
-    private final double resistencia;   // Cambiado a double
-    private final double energiaActual; // AGREGADO
-    private final double distanciaRecorrida; // AGREGADO 
+    private final double velocidadBase;
+    private final double resistencia;
+    private final double energiaActual;
+    private final double distanciaRecorrida;
 
     public CaballoDTO(String id, String nombre, String emoji, double velocidad, 
                       double resistencia, double energia, double distancia) {

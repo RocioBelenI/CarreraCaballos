@@ -5,7 +5,6 @@ import java.awt.*;
 
 public class PanelInicio extends JPanel {
     
-    // Esta es la interfaz que ya implementaste en AppFrame
     public interface ListenerInicio {
         void alPresionarEntrar();
     }
