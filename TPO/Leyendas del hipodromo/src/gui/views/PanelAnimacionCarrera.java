@@ -1,25 +1,17 @@
 package gui.views;
 
 import gui.components.PanelCarrilCarrera;
-
-import controllers.ControllerCarrera;
+import controllers.UiController;
+import dto.CaballoDTO;
+import dto.JugadorDTO; // Asumimos la existencia de un DTO similar para Jugador
 import models.MomentoCarrera;
 import models.ProgresoCarrera;
-import controllers.UiController;
 
+import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-
-import javax.swing.Timer; 
-import javax.swing.BorderFactory;
-import javax.swing.Box;
-import javax.swing.BoxLayout;
-import javax.swing.JButton;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
 
 public class PanelAnimacionCarrera extends JPanel {
     private final JPanel contenedorCarriles;
@@ -81,17 +73,17 @@ public class PanelAnimacionCarrera extends JPanel {
             return;
         }
 
-        // Creamos el mapa relacionando el ID del caballo con su Nombre
-        java.util.Map<Long, String> mapaCaballos = new java.util.HashMap<>();
-        for (var caballo : UiController.getCaballosDisponibles()) {
+        // Creamos el mapa relacionando el ID (String) del caballo con su Nombre usando los DTOs
+        java.util.Map<String, String> mapaCaballos = new java.util.HashMap<>();
+        for (CaballoDTO caballo : UiController.getCaballosDisponiblesParaUI()) {
             mapaCaballos.put(caballo.getId(), caballo.getNombre());
         }
 
         // Iteramos sobre los jugadores que van a correr
         jugadores.forEach(nombreJugador -> {
-            Long caballoId = UiController.getJugadores().stream()
+            String caballoId = UiController.getJugadoresParaUI().stream()
                     .filter(jugador -> jugador.getNombre().equals(nombreJugador))
-                    .map(jugador -> jugador.getCaballoId())
+                    .map(JugadorDTO::getCaballoId)
                     .findFirst()
                     .orElse(null);
 
@@ -113,12 +105,11 @@ public class PanelAnimacionCarrera extends JPanel {
             temporizador.stop();
         }
 
-        // Acá es donde el temporizador llama a avanzarAnimacion (antes stepAnimation) cada 900 milisegundos
+        // El temporizador llama a avanzarAnimacion cada 900 milisegundos
         temporizador = new Timer(900, e -> avanzarAnimacion());
         temporizador.start();
     }
 
-    // Este es el método que te faltaba, traducido de stepAnimation()
     private void avanzarAnimacion() {
         if (progresoCarrera == null || indiceActual >= progresoCarrera.getMomentos().size()) {
             if (temporizador != null) {

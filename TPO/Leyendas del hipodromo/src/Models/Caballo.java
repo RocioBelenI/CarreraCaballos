@@ -1,5 +1,9 @@
 package models;
 
+/**
+ * Clase base del modelo de dominio para la simulación de la carrera.
+ * Libre de anotaciones de base de datos (JPA).
+ */
 public abstract class Caballo {
     protected String nombre;
     protected double velocidadBase;
@@ -30,30 +34,37 @@ public abstract class Caballo {
         }
     }
 
-    public void avanzar() {
-        // Corre a velocidadBase hasta que se cansa (energia <= 0), luego aplica penalidad
-        double factorCansancio = (energiaActual > 0) ? 1.0 : penalidadCansancio;
-        
-        // Fórmula de Avance por turno
-        double avanceTurno = velocidadBase * factorCansancio * motivacion;
-        distanciaRecorrida += avanceTurno;
-    }
+    // Métodos de comportamiento de la carrera que implementarán los hijos
+    public abstract void avanzar();
+    public abstract void reducirEnergia();
 
-    public void reducirEnergia() {
-        if (energiaActual > 0) {
-            energiaActual -= velocidadBase; 
-        }
+    // --- Getters y Setters ---
+
+    public String getNombre() { 
+        return nombre; 
     }
     
-    public double getDistanciaRecorrida(){
-        return distanciaRecorrida;
+    public double getVelocidadBase() { 
+        return velocidadBase; 
     }
     
-    public String getNombre(){
-        return nombre;
+    public double getResistencia() { 
+        return resistencia; 
     }
     
-    public double getEnergiaActual() {
-        return energiaActual;
+    public double getEnergiaActual() { 
+        return energiaActual; 
+    }
+    
+    public void setEnergiaActual(double energiaActual) { 
+        this.energiaActual = energiaActual; 
+    }
+    
+    public double getDistanciaRecorrida() { 
+        return distanciaRecorrida; 
+    }
+    
+    public void setDistanciaRecorrida(double distanciaRecorrida) { 
+        this.distanciaRecorrida = distanciaRecorrida; 
     }
 }

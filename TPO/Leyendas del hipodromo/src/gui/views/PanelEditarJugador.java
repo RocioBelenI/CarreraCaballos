@@ -1,15 +1,16 @@
 package gui.views;
 
 import gui.components.PanelTarjetaCaballo;
-import data.dao.CaballoDAO;
-import data.dao.JugadorDAO;
-import javax.swing.*;
-
+import dto.CaballoDTO;
+import dto.JugadorDTO;
 import controllers.UiController;
 
+import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class PanelEditarJugador extends JPanel {
     private final DefaultListModel<String> modeloLista;
@@ -18,7 +19,7 @@ public class PanelEditarJugador extends JPanel {
     private final JPanel cuadriculaCaballos;
     private final List<PanelTarjetaCaballo> tarjetasCaballos = new ArrayList<>();
     private final Runnable alCambiarJugadores;
-    private CaballoDAO caballoSeleccionado;
+    private CaballoDTO caballoSeleccionado;
     private int indiceSeleccionado = -1;
 
     public PanelEditarJugador(Runnable alCambiarJugadores) {
@@ -76,7 +77,7 @@ public class PanelEditarJugador extends JPanel {
         cuadriculaCaballos.removeAll();
         tarjetasCaballos.clear();
 
-        for (CaballoDAO caballo : UiController.getCaballosDisponibles()) {
+        for (CaballoDTO caballo : UiController.getCaballosDisponiblesParaUI()) {
             PanelTarjetaCaballo tarjeta = new PanelTarjetaCaballo(caballo);
             tarjeta.setListenerSeleccion(() -> seleccionarCaballo(tarjeta));
             tarjetasCaballos.add(tarjeta);
@@ -93,15 +94,17 @@ public class PanelEditarJugador extends JPanel {
 
     public void actualizarListaJugadores() {
         modeloLista.clear();
-        List<CaballoDAO> caballos = UiController.getCaballosDisponibles();
-        java.util.Map<Long, String> mapaCaballos = new java.util.HashMap<>();
-        for (CaballoDAO caballo : caballos) {
+        Map<String, String> mapaCaballos = new HashMap<>();
+        for (CaballoDTO caballo : UiController.getCaballosDisponiblesParaUI()) {
             mapaCaballos.put(caballo.getId(), caballo.getNombre()); 
         }
-        UiController.getJugadores().forEach(jugador -> modeloLista.addElement(jugador.getNombre() + " — " + mapaCaballos.getOrDefault(jugador.getCaballoId(), "Desconocido")));
+        
+        for (JugadorDTO jugador : UiController.getJugadoresParaUI()) {
+            modeloLista.addElement(jugador.getNombre() + " — " + mapaCaballos.getOrDefault(jugador.getCaballoId(), "Desconocido"));
+        }
     }
 
-private void cargarJugadorSeleccionado() {
+    private void cargarJugadorSeleccionado() {
         indiceSeleccionado = listaJugadores.getSelectedIndex();
         if (indiceSeleccionado < 0) {
             campoNombre.setText("");
@@ -110,13 +113,13 @@ private void cargarJugadorSeleccionado() {
             return;
         }
 
-        JugadorDAO jugador = UiController.getJugadores().get(indiceSeleccionado);
+        JugadorDTO jugador = UiController.getJugadoresParaUI().get(indiceSeleccionado);
         campoNombre.setText(jugador.getNombre());
         
-        caballoSeleccionado = UiController.getCaballosDisponibles().stream()
+        caballoSeleccionado = UiController.getCaballosDisponiblesParaUI().stream()
                 .filter(caballo -> caballo.getId().equals(jugador.getCaballoId()))
                 .findFirst()
-                .orElse(null); // Si por algún motivo no lo encuentra, queda en null
+                .orElse(null);
 
         tarjetasCaballos.forEach(tarjeta -> {
             boolean esElCaballoSeleccionado = (caballoSeleccionado != null) 
@@ -136,8 +139,11 @@ private void cargarJugadorSeleccionado() {
             JOptionPane.showMessageDialog(this, "Completa el nombre y selecciona un caballo.", "Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
-        UiController.actualizarJugador(indiceSeleccionado, nombre, caballoSeleccionado);
+        
+        // Delegamos la actualización al Controller pasándole solo el ID (String)
+        UiController.actualizarJugador(indiceSeleccionado, nombre, caballoSeleccionado.getId());
         actualizarListaJugadores();
+        
         if (alCambiarJugadores != null) {
             alCambiarJugadores.run();
         }
