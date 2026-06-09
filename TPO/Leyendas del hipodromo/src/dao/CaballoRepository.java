@@ -2,14 +2,19 @@ package dao;
 
 import config.JPAUtil;
 import jakarta.persistence.EntityManager;
+import models.Caballo;
+import models.CaballoVeloz;
+import models.CaballoResistente;
+import models.CaballoEquilibrado;
+
 import java.util.List;
 
-public class CaballoRepository extends GenericJpaRepository<CaballoDAO, Long> {
+public class CaballoRepository extends GenericJpaRepository<Caballo, Long> {
 
     private static CaballoRepository instance;
 
     private CaballoRepository() {
-        super(CaballoDAO.class);
+        super(Caballo.class);
     }
 
     public static CaballoRepository getInstance() {
@@ -19,16 +24,16 @@ public class CaballoRepository extends GenericJpaRepository<CaballoDAO, Long> {
         return instance;
     }
 
-    public List<CaballoDAO> listarCaballos() {
+    public List<Caballo> listarCaballos() {
         return listarTodos();
     }
 
-    public CaballoDAO buscarPorNombre(String nombre) {
+    public Caballo buscarPorNombre(String nombre) {
         EntityManager em = JPAUtil.getInstance().crearEntityManager();
         try {
             em.getTransaction().begin();
-            // Asegurate de que la query llame a la clase DAO correcta
-            List<CaballoDAO> resultados = em.createQuery("SELECT c FROM CaballoDAO c WHERE c.nombre = :nombre", CaballoDAO.class)
+            List<Caballo> resultados = em.createQuery(
+                    "SELECT c FROM Caballo c WHERE c.nombre = :nombre", Caballo.class)
                     .setParameter("nombre", nombre)
                     .getResultList();
             em.getTransaction().commit();
@@ -42,16 +47,20 @@ public class CaballoRepository extends GenericJpaRepository<CaballoDAO, Long> {
         }
     }
 
+    /**
+     * Carga los datos iniciales de caballos si la tabla está vacía.
+     * Instancia las entidades reales (con su tipo/comportamiento) directamente.
+     */
     public void cargarDatosCaballo() {
-        List<CaballoDAO> caballos = listarCaballos();
+        List<Caballo> caballos = listarCaballos();
         if (!caballos.isEmpty()) {
             return;
         }
 
-        // Instanciamos los DAOs, que son los que se guardan en la base de datos
-        guardar(new CaballoDAO("veloz", "Relámpago", "⚡", 90, 60));
-        guardar(new CaballoDAO("resistente", "Tormenta", "🌩️", 70, 90));
-        guardar(new CaballoDAO("equilibrado", "Brisa", "🌀", 80, 80));
-        guardar(new CaballoDAO("fuerte", "Centella", "🔥", 85, 70));
+        guardar(new CaballoVeloz("veloz", "Relámpago", "⚡", 90, 60));
+        guardar(new CaballoResistente("resistente", "Tormenta", "🌩️", 70, 90));
+        guardar(new CaballoEquilibrado("equilibrado", "Brisa", "🌀", 80, 80));
+        guardar(new CaballoEquilibrado("fuerte", "Centella", "🔥", 85, 70));
+
     }
 }

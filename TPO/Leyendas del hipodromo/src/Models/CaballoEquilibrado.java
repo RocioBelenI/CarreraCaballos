@@ -1,21 +1,32 @@
 package models;
 
+import jakarta.persistence.DiscriminatorValue;
+import jakarta.persistence.Entity;
+
 /**
- * Modelo de negocio puro para el caballo equilibrado.
+ * Entidad JPA para el caballo equilibrado.
  * Balance perfecto entre velocidad y resistencia.
+ * También representa el tipo "fuerte" (fallback por defecto).
  */
+@Entity
+@DiscriminatorValue("equilibrado")
 public class CaballoEquilibrado extends Caballo {
 
-    public CaballoEquilibrado(String nombre) {
-        super(nombre);
-        this.velocidadBase = 12.0;
-        this.resistencia = 800.0;
+    // Constructor vacío requerido por JPA
+    protected CaballoEquilibrado() {
+        super();
         this.penalidadCansancio = 0.40; // Mantiene un buen balance al cansarse
+    }
+
+    // Constructor para el seeder del repositorio
+    public CaballoEquilibrado(String codigo, String nombre, String emoji, double velocidadBase, double resistencia) {
+        super(codigo, nombre, emoji, velocidadBase, resistencia);
+        this.penalidadCansancio = 0.40;
     }
 
     @Override
     public void avanzar() {
-        // Fórmula de avance según energía actual
+        // Fórmula de avance según energía actual (lógica original de los compañeros)
         double avance = getVelocidadBase() * (getEnergiaActual() / 100);
         this.distanciaRecorrida += avance;
         reducirEnergia();
@@ -23,12 +34,14 @@ public class CaballoEquilibrado extends Caballo {
 
     @Override
     public void reducirEnergia() {
+        // Fórmula original de los compañeros
         setEnergiaActual(getEnergiaActual() - (getVelocidadBase() * 0.10));
 
-        if (this.energiaActual > 0) {
-            this.energiaActual -= 5; 
-        } else {
-            this.energiaActual = 0;
+        this.energiaActual -= 5;
+        
+        // Garantizar un mínimo de energía para que el caballo nunca se detenga por completo
+        if (this.energiaActual < 15) {
+            this.energiaActual = 15;
         }
     }
 }
