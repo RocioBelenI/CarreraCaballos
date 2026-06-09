@@ -1,29 +1,47 @@
 package models;
 
+import jakarta.persistence.DiscriminatorValue;
+import jakarta.persistence.Entity;
+
 /**
- * Modelo de negocio puro para el caballo resistente.
+ * Entidad JPA para el caballo resistente.
  * Mantiene un buen ritmo constante a pesar del cansancio.
  */
+@Entity
+@DiscriminatorValue("resistente")
 public class CaballoResistente extends Caballo {
 
-    public CaballoResistente(String nombre) {
-        super(nombre);
-        this.velocidadBase = 9.0;
-        this.resistencia = 1500.0;
+    // Constructor vacío requerido por JPA
+    protected CaballoResistente() {
+        super();
         this.penalidadCansancio = 0.60; // Mantiene buen ritmo a pesar del cansancio
+    }
+
+    // Constructor para el seeder del repositorio
+    public CaballoResistente(String codigo, String nombre, String emoji, double velocidadBase, double resistencia) {
+        super(codigo, nombre, emoji, velocidadBase, resistencia);
+        this.penalidadCansancio = 0.60;
     }
 
     @Override
     public void avanzar() {
-        double avance = getVelocidadBase() * (getResistencia() / 10); 
+        // Factor entre 0.8 y 1.0 según cuánta energía le queda
+        // (no varía mucho → ritmo "resistente")
+        double factorEnergia = 0.8 + (getEnergiaActual() / getResistencia()) * 0.2;
+        double avance = getVelocidadBase() * factorEnergia;
         this.distanciaRecorrida += avance;
         reducirEnergia();
     }
 
     @Override
     public void reducirEnergia() {
-        // Consume energía más lentamente
+        // Consume energía más lentamente (lógica original de los compañeros)
         setEnergiaActual(getEnergiaActual() - (getVelocidadBase() * 0.05));
-        this.energiaActual -= (10 / getResistencia()); 
+        this.energiaActual -= (10 / getResistencia());
+
+        // Garantizar un mínimo de energía para que el caballo nunca se detenga por completo
+        if (this.energiaActual < 15) {
+            this.energiaActual = 15;
+        }
     }
 }
