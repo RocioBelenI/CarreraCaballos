@@ -33,4 +33,13 @@
             <version>12.4.2.jre11</version> 
         </dependency>
     </dependencies>
+
+    <build>
+        <sourceDirectory>src</sourceDirectory>
+        <resources>
+            <resource>
+                <directory>src/resources</directory>
+            </resource>
+        </resources>
+    </build>
 </project>

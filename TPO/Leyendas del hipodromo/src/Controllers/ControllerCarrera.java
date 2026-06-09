@@ -27,9 +27,9 @@ public class ControllerCarrera {
         for (JugadorDAO jugador : jugadoresDAO) {
             // Buscamos el caballo DAO correspondiente
             CaballoDAO cabDAO = caballosDAO.stream()
-                .filter(c -> c.getId().equals(jugador.getCaballo()))
-                .findFirst()
-                .orElse(null);
+                    .filter(c -> c.getId().equals(jugador.getCaballo()))
+                    .findFirst()
+                    .orElse(null);
 
             Caballo modeloCaballo = ControllerCaballo.crearCaballoDesdeDAO(cabDAO);
             modeloCaballo.prepararParaCarrera();
@@ -40,54 +40,54 @@ public class ControllerCarrera {
     }
 }
 
-        boolean carreraTerminada = false;
+boolean carreraTerminada = false;
 
-        // 2. Bucle de Simulación por turnos
+// 2. Bucle de Simulación por turnos
         while (!carreraTerminada) {
-            Map<String, Integer> progresoTurno = new LinkedHashMap<>();
-            boolean alguienCruzoMeta = false;
+Map<String, Integer> progresoTurno = new LinkedHashMap<>();
+boolean alguienCruzoMeta = false;
 
             for (int i = 0; i < corredores.size(); i++) {
-                Caballo caballo = corredores.get(i);
-                String nombreJugador = nombresJugadores.get(i);
+Caballo caballo = corredores.get(i);
+String nombreJugador = nombresJugadores.get(i);
 
-                // El caballo avanza y se cansa
+// El caballo avanza y se cansa
                 caballo.avanzar();
                 caballo.reducirEnergia();
 
-                // Convertir la distancia en porcentaje (0 a 100)
-                double distancia = caballo.getDistanciaRecorrida();
-                int porcentaje = (int) Math.min(100, (distancia / distanciaMeta) * 100);
+// Convertir la distancia en porcentaje (0 a 100)
+double distancia = caballo.getDistanciaRecorrida();
+int porcentaje = (int) Math.min(100, (distancia / distanciaMeta) * 100);
                 progresoTurno.put(nombreJugador, porcentaje);
 
                 if (porcentaje >= 100) {
-                    alguienCruzoMeta = true; // ¡Tenemos un ganador!
-                }
-            }
+alguienCruzoMeta = true; // ¡Tenemos un ganador!
+        }
+        }
 
-            momentos.add(new MomentoCarrera(progresoTurno));
+        momentos.add(new MomentoCarrera(progresoTurno));
 
-            if (alguienCruzoMeta) {
-                carreraTerminada = true;
-            }
+        if (alguienCruzoMeta) {
+carreraTerminada = true;
+        }
         }
 
         return new ProgresoCarrera(momentos);
     }
-    
-    /* 
-     * Sugerencia de Integración en la Interfaz (UI) - AppFrame.java
-     * -------------------------------------------------------------
-     * public void startRaceWithPlayers(List<String> selectedPlayers) {
-     *     List<data.dao.JugadorDAO> todosJugadores = controllers.UiController.getJugadores();
-     *     List<data.dao.CaballoDAO> todosCaballos = controllers.UiController.getCaballosDisponibles();
-     *      
-     *     List<data.dao.JugadorDAO> participantes = todosJugadores.stream()
-     *         .filter(j -> selectedPlayers.contains(j.getNombre()))
-     *         .collect(java.util.stream.Collectors.toList());
-     *
-     *     models.ProgresoCarrera progress = controllers.ControllerCarrera.simularCarrera(participantes, todosCaballos, 800);
-     *     startRace(progress);
-     * }
-     */
-}
+
+            /*
+             * Sugerencia de Integración en la Interfaz (UI) - AppFrame.java
+             * -------------------------------------------------------------
+             * public void startRaceWithPlayers(List<String> selectedPlayers) {
+             *     List<data.dao.JugadorDAO> todosJugadores = controllers.UiController.getJugadores();
+             *     List<data.dao.CaballoDAO> todosCaballos = controllers.UiController.getCaballosDisponibles();
+             *
+             *     List<data.dao.JugadorDAO> participantes = todosJugadores.stream()
+             *         .filter(j -> selectedPlayers.contains(j.getNombre()))
+             *         .collect(java.util.stream.Collectors.toList());
+             *
+             *     models.ProgresoCarrera progress = controllers.ControllerCarrera.simularCarrera(participantes, todosCaballos, 800);
+             *     startRace(progress);
+             * }
+             */
+            }
