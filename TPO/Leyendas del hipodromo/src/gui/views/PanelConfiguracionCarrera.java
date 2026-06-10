@@ -110,6 +110,19 @@ public class PanelConfiguracionCarrera extends JPanel {
             return;
         }
 
-        ventanaPrincipal.iniciarCarreraConJugadores(jugadoresSeleccionados); 
+        // Leer y validar la distancia ingresada por el usuario
+        int distancia;
+        try {
+            distancia = Integer.parseInt(campoDistancia.getText().trim());
+            if (distancia < 100) {
+                JOptionPane.showMessageDialog(this, "La distancia mínima es 100 metros.", "Atención", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+        } catch (NumberFormatException ex) {
+            JOptionPane.showMessageDialog(this, "Ingresa un número válido en el campo de distancia.", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        ventanaPrincipal.iniciarCarreraConJugadores(jugadoresSeleccionados, distancia);
     }
 }

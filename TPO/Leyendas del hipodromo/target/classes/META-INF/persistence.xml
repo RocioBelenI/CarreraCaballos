@@ -19,7 +19,7 @@
 
             <!-- Cambiar usuario y contraseña por los de tu instancia SQL Server -->
             <property name="jakarta.persistence.jdbc.user" value="sa"/>
-            <property name="jakarta.persistence.jdbc.password" value="artech"/>
+            <property name="jakarta.persistence.jdbc.password" value="CarreraCaballos2026"/>
 
             <!-- Dialecto de Hibernate para SQL Server -->
             <property name="hibernate.dialect" value="org.hibernate.dialect.SQLServerDialect"/>

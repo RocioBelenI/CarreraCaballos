@@ -21,13 +21,13 @@ public class ControllerCaballo {
 
         for (Caballo c : caballosDB) {
             listaParaVista.add(new CaballoDTO(
-                c.getId().toString(),
-                c.getNombre(),
-                c.getEmoji(),
-                c.getVelocidadBase(),
-                c.getResistencia(),
-                c.getResistencia(), // Energía inicial = resistencia
-                0.0                 // Distancia inicial = 0
+                    c.getId().toString(),
+                    c.getNombre(),
+                    c.getEmoji(),
+                    c.getVelocidadBase(),
+                    c.getResistencia(),
+                    c.getResistencia(), // Energía inicial = resistencia
+                    0.0                 // Distancia inicial = 0
             ));
         }
         return listaParaVista;

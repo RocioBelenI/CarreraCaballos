@@ -57,10 +57,21 @@ public class CaballoRepository extends GenericJpaRepository<Caballo, Long> {
             return;
         }
 
-        guardar(new CaballoVeloz("veloz", "Relámpago", "⚡", 90, 60));
-        guardar(new CaballoResistente("resistente", "Tormenta", "🌩️", 70, 90));
+        // ⚡ Relámpago (Veloz): sprint puro. Vel altísima, poca resistencia.
+        //    Agota en ~8 turnos → gana pistas ≤ 600m
+        guardar(new CaballoVeloz("veloz", "Relámpago", "⚡", 90, 70));
+
+        // 🌩️ Tormenta (Resistente): fondista. Vel moderada, máxima resistencia.
+        //    Dura ~33 turnos a ritmo estable → gana pistas > 1200m
+        guardar(new CaballoResistente("resistente", "Tormenta", "🌩️", 72, 100));
+
+        // 🌀 Brisa (Equilibrado clásico): balance perfecto.
+        //    ~18 turnos de energía → zona óptima 700-1500m
         guardar(new CaballoEquilibrado("equilibrado", "Brisa", "🌀", 80, 80));
-        guardar(new CaballoEquilibrado("fuerte", "Centella", "🔥", 85, 70));
+
+        // 🔥 Centella (Equilibrado ofensivo): más veloz que Brisa, levemente menos resistente.
+        //    ~17 turnos de energía → zona óptima 600-1200m
+        guardar(new CaballoEquilibrado("fuerte", "Centella", "🔥", 82, 74));
 
     }
 }
