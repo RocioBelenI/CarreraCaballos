@@ -1,15 +1,17 @@
 package dao;
 
 import jakarta.persistence.EntityManager;
+import models.Jugador;
+
 import java.util.List;
 import config.JPAUtil;
 
-public class JugadorRepository extends GenericJpaRepository<JugadorDAO, Long> {
+public class JugadorRepository extends GenericJpaRepository<Jugador, Long> {
 
     private static JugadorRepository instance;
 
     private JugadorRepository() {
-        super(JugadorDAO.class);
+        super(Jugador.class);
     }
 
     public static JugadorRepository getInstance() {
@@ -19,17 +21,16 @@ public class JugadorRepository extends GenericJpaRepository<JugadorDAO, Long> {
         return instance;
     }
 
-    // Usamos JugadorDAO en lugar del modelo Jugador
-    public List<JugadorDAO> listarJugadores() {
+    public List<Jugador> listarJugadores() {
         return listarTodos();
     }
 
-    // Usamos JugadorDAO en lugar del modelo Jugador
-    public JugadorDAO buscarPorNombre(String nombre) {
+    public Jugador buscarPorNombre(String nombre) {
         EntityManager em = JPAUtil.getInstance().crearEntityManager();
         try {
             em.getTransaction().begin();
-            List<JugadorDAO> resultados = em.createQuery("SELECT p FROM JugadorDAO p WHERE p.nombre = :nombre", JugadorDAO.class)
+            List<Jugador> resultados = em.createQuery(
+                    "SELECT p FROM Jugador p WHERE p.nombre = :nombre", Jugador.class)
                     .setParameter("nombre", nombre)
                     .getResultList();
             em.getTransaction().commit();
@@ -43,8 +44,7 @@ public class JugadorRepository extends GenericJpaRepository<JugadorDAO, Long> {
         }
     }
 
-    // Usamos JugadorDAO en lugar del modelo Jugador
-    public JugadorDAO guardarJugador(JugadorDAO jugador) {
+    public Jugador guardarJugador(Jugador jugador) {
         return guardar(jugador);
     }
 }

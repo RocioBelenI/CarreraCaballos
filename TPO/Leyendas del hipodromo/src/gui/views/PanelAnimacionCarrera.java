@@ -115,7 +115,6 @@ public class PanelAnimacionCarrera extends JPanel {
             if (temporizador != null) {
                 temporizador.stop();
             }
-            etiquetaEstado.setText("Carrera finalizada. Revisa los puntajes.");
             botonOtraVez.setEnabled(true);
             return;
         }
@@ -130,6 +129,30 @@ public class PanelAnimacionCarrera extends JPanel {
 
         if (indiceActual == progresoCarrera.getMomentos().size() - 1) {
             UiController.asignarPuntaje(momento.getProgresoPorJugador());
+            
+            // Anunciar el ganador
+            List<Map.Entry<String, Integer>> resultados = new ArrayList<>(momento.getProgresoPorJugador().entrySet());
+            resultados.sort((e1, e2) -> e2.getValue().compareTo(e1.getValue()));
+            
+            if (!resultados.isEmpty()) {
+                int maxPorcentaje = resultados.get(0).getValue();
+                List<String> ganadores = new ArrayList<>();
+                for (Map.Entry<String, Integer> entrada : resultados) {
+                    if (entrada.getValue() == maxPorcentaje) {
+                        ganadores.add(entrada.getKey());
+                    }
+                }
+                
+                if (ganadores.size() == 1) {
+                    etiquetaEstado.setText("🏆 ¡Ganó " + ganadores.get(0) + "!");
+                } else {
+                    etiquetaEstado.setText("🏆 ¡Empate! Ganaron: " + String.join(", ", ganadores));
+                }
+            } else {
+                etiquetaEstado.setText("Carrera finalizada. Revisa los puntajes.");
+            }
+            
+            botonOtraVez.setEnabled(true);
             alCompletarCarrera.run();
         }
         indiceActual++;
