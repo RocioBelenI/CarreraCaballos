@@ -39,20 +39,16 @@ public class PanelPuntajes extends JPanel {
     public void actualizarPuntajes() {
         modeloTabla.setRowCount(0); // Limpia la tabla antes de volver a llenarla
 
-        // 1. Creamos el diccionario (Map) relacionando ID -> Nombre del caballo usando DTOs
         Map<String, String> mapaCaballos = new HashMap<>();
         for (CaballoDTO caballo : UiController.getCaballosDisponiblesParaUI()) {
             mapaCaballos.put(caballo.getId(), caballo.getNombre());
         }
 
-        // 2. Traemos a los jugadores (DTOs), los ordenamos por puntaje de mayor a menor y los agregamos
         UiController.getJugadoresParaUI().stream()
                 .sorted(Comparator.comparingInt(JugadorDTO::getPuntaje).reversed())
                 .forEach(jugador -> {
-                    // Buscamos el nombre del caballo en el diccionario
                     String nombreCaballo = mapaCaballos.getOrDefault(jugador.getCaballoId(), "Desconocido");
-                    
-                    // Agregamos la fila a la tabla
+
                     modeloTabla.addRow(new Object[]{
                             jugador.getNombre(),
                             nombreCaballo,

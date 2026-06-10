@@ -74,13 +74,11 @@ public class PanelConfiguracionCarrera extends JPanel {
         panelCheckboxesJugadores.removeAll();
         checkboxesJugadores.clear();
 
-        // Creamos el diccionario relacionando el ID (String) del caballo con su Nombre usando los DTOs
         Map<String, String> mapaCaballos = new HashMap<>();
         for (CaballoDTO caballo : UiController.getCaballosDisponiblesParaUI()) {
             mapaCaballos.put(caballo.getId(), caballo.getNombre());
         }
 
-        // Iteramos sobre los jugadores usando los DTOs para armar los checkboxes
         for (JugadorDTO jugador : UiController.getJugadoresParaUI()) {
             String nombreCaballo = mapaCaballos.getOrDefault(jugador.getCaballoId(), "Desconocido");
             
@@ -110,7 +108,6 @@ public class PanelConfiguracionCarrera extends JPanel {
             return;
         }
 
-        // Leer y validar la distancia ingresada por el usuario
         int distancia;
         try {
             distancia = Integer.parseInt(campoDistancia.getText().trim());

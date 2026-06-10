@@ -139,8 +139,7 @@ public class PanelEditarJugador extends JPanel {
             JOptionPane.showMessageDialog(this, "Completa el nombre y selecciona un caballo.", "Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
-        
-        // Delegamos la actualización al Controller pasándole solo el ID (String)
+
         UiController.actualizarJugador(indiceSeleccionado, nombre, caballoSeleccionado.getId());
         actualizarListaJugadores();
         

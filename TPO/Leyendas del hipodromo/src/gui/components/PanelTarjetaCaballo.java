@@ -25,7 +25,7 @@ public class PanelTarjetaCaballo extends JPanel {
 
         JPanel estadisticas = new JPanel(new GridLayout(2, 1, 4, 4));
         estadisticas.setOpaque(false);
-        // Usamos el DTO y casteamos a int para la barra visual
+
         estadisticas.add(crearBarra("Velocidad", (int) caballo.getVelocidadBase(), new Color(37, 99, 235)));
         estadisticas.add(crearBarra("Resistencia", (int) caballo.getResistencia(), new Color(244, 114, 33)));
         add(estadisticas, BorderLayout.CENTER);

@@ -96,11 +96,6 @@ public class AppFrame extends JFrame implements PanelNavegacion.ListenerNavegaci
         cardLayout.show(panelContenedor, nombre);
     }
 
-    /**
-     * Orquesta la carrera a partir de los nombres de jugadores seleccionados:
-     * busca los jugadores del modelo, simula la carrera con ControllerCarrera
-     * y delega el inicio de la animación.
-     */
     public void iniciarCarreraConJugadores(List<String> nombresSeleccionados, int distanciaMeta) {
         List<Jugador> jugadoresParticipantes = UiController.getJugadoresModelo().stream()
                 .filter(j -> nombresSeleccionados.contains(j.getNombre()))
@@ -113,7 +108,6 @@ public class AppFrame extends JFrame implements PanelNavegacion.ListenerNavegaci
             return;
         }
 
-        // Se simula la carrera con la distancia ingresada por el usuario
         ProgresoCarrera progreso = ControllerCarrera.simularCarrera(jugadoresParticipantes, distanciaMeta);
 
         panelAnimacionCarrera.iniciarAnimacion(progreso);

@@ -3,8 +3,6 @@
     <persistence-unit name="carreraPU" transaction-type="RESOURCE_LOCAL">
         <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
 
-        <!-- Entidades registradas: jerarquía de Caballo (SINGLE_TABLE) y Jugador -->
-        <!-- NOTA: los packages son 'models' (minúsculas) según este proyecto -->
         <class>models.Caballo</class>
         <class>models.CaballoVeloz</class>
         <class>models.CaballoResistente</class>
@@ -12,19 +10,15 @@
         <class>models.Jugador</class>
 
         <properties>
-            <!-- Configuración para SQL Server -->
             <property name="jakarta.persistence.jdbc.driver" value="com.microsoft.sqlserver.jdbc.SQLServerDriver"/>
-            <!-- URL de conexión: cambiar 'localhost' y puerto si fuera necesario -->
+
             <property name="jakarta.persistence.jdbc.url" value="jdbc:sqlserver://localhost:1433;databaseName=hipodromo;encrypt=true;trustServerCertificate=true;"/>
 
-            <!-- Cambiar usuario y contraseña por los de tu instancia SQL Server -->
             <property name="jakarta.persistence.jdbc.user" value="sa"/>
             <property name="jakarta.persistence.jdbc.password" value="CarreraCaballos2026"/>
 
-            <!-- Dialecto de Hibernate para SQL Server -->
             <property name="hibernate.dialect" value="org.hibernate.dialect.SQLServerDialect"/>
 
-            <!-- Opciones adicionales de Hibernate -->
             <property name="hibernate.hbm2ddl.auto" value="update"/>
             <property name="hibernate.show_sql" value="true"/>
             <property name="hibernate.format_sql" value="true"/>

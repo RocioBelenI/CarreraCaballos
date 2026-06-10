@@ -74,7 +74,6 @@ public class PanelCrearJugador extends JPanel {
     }
 
     private void cargarTarjetasCaballos() {
-        // Pedimos los DTOs al controlador
         for (CaballoDTO caballo : UiController.getCaballosDisponiblesParaUI()) {
             PanelTarjetaCaballo tarjeta = new PanelTarjetaCaballo(caballo);
             tarjeta.setListenerSeleccion(() -> seleccionarCaballo(tarjeta));
@@ -97,7 +96,6 @@ public class PanelCrearJugador extends JPanel {
             return;
         }
         
-        // Pasamos solo el ID del caballo al Controller para mantener la arquitectura limpia
         if (!UiController.agregarJugador(nombre, caballoSeleccionado.getId())) {
             JOptionPane.showMessageDialog(this, "Ingresa un nombre válido para el jugador.", "Error", JOptionPane.ERROR_MESSAGE);
             return;

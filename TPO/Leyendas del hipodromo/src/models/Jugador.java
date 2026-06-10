@@ -11,10 +11,6 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.Transient;
 
-/**
- * Entidad JPA y Modelo de negocio para el jugador.
- * Tiene una relación real @ManyToOne hacia la entidad Caballo.
- */
 @Entity
 @Table(name = "jugador")
 public class Jugador {
@@ -29,16 +25,13 @@ public class Jugador {
     @Column(nullable = false)
     private int puntaje;
 
-    // Relación hacia la entidad real del dominio: Caballo
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "caballo_id", nullable = false)
     private Caballo caballo;
 
-    // Estado de simulación: posición durante la carrera, no se persiste
     @Transient
     private int posicionCarrera;
 
-    // Constructor vacío requerido por JPA
     protected Jugador() {
     }
 
@@ -48,14 +41,10 @@ public class Jugador {
         this.puntaje = 0;
     }
 
-    // --- Getters y Setters ---
-
     public Long getId() { return id; }
 
     public String getNombre() { return nombre; }
     public void setNombre(String nombre) { this.nombre = nombre; }
-
-
 
     public int getPuntaje() { return puntaje; }
     public void setPuntaje(int puntaje) { this.puntaje = puntaje; }
@@ -63,7 +52,6 @@ public class Jugador {
     public Caballo getCaballo() { return caballo; }
     public void setCaballo(Caballo caballo) { this.caballo = caballo; }
 
-    // Método helper para compatibilidad con código que espera el ID del caballo
     public Long getCaballoId() {
         return caballo != null ? caballo.getId() : null;
     }

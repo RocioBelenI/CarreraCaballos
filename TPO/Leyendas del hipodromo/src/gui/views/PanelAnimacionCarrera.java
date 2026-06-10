@@ -73,13 +73,11 @@ public class PanelAnimacionCarrera extends JPanel {
             return;
         }
 
-        // Creamos el mapa relacionando el ID (String) del caballo con su Nombre usando los DTOs
         java.util.Map<String, String> mapaCaballos = new java.util.HashMap<>();
         for (CaballoDTO caballo : UiController.getCaballosDisponiblesParaUI()) {
             mapaCaballos.put(caballo.getId(), caballo.getNombre());
         }
 
-        // Iteramos sobre los jugadores que van a correr
         jugadores.forEach(nombreJugador -> {
             String caballoId = UiController.getJugadoresParaUI().stream()
                     .filter(jugador -> jugador.getNombre().equals(nombreJugador))
@@ -129,8 +127,7 @@ public class PanelAnimacionCarrera extends JPanel {
 
         if (indiceActual == progresoCarrera.getMomentos().size() - 1) {
             UiController.asignarPuntaje(momento.getProgresoPorJugador());
-            
-            // Anunciar el ganador
+
             List<Map.Entry<String, Integer>> resultados = new ArrayList<>(momento.getProgresoPorJugador().entrySet());
             resultados.sort((e1, e2) -> e2.getValue().compareTo(e1.getValue()));
             

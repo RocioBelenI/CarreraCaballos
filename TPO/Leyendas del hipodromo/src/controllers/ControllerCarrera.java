@@ -17,7 +17,6 @@ public class ControllerCarrera {
         List<Caballo> corredores = new ArrayList<>();
         List<String> nombresJugadores = new ArrayList<>();
 
-        // 1. Obtener los caballos de los jugadores y prepararlos
         for (Jugador jugador : jugadores) {
             Caballo caballo = jugador.getCaballo();
             if (caballo != null) {
@@ -29,7 +28,6 @@ public class ControllerCarrera {
 
         boolean carreraTerminada = false;
 
-        // 2. Bucle de Simulación por turnos
         while (!carreraTerminada) {
             Map<String, Integer> progresoTurno = new LinkedHashMap<>();
             boolean alguienCruzoMeta = false;

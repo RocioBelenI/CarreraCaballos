@@ -11,13 +11,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-/**
- * Actúa como puente entre la Interfaz Gráfica (UI) y la lógica del juego/base de datos.
- *
- * Regla fundamental:
- *  - Métodos para la UI    → devuelven DTOs (CaballoDTO, JugadorDTO)
- *  - Métodos para el motor → devuelven entidades reales (Jugador, Caballo)
- */
 public class UiController {
 
     private static final ControllerCaballo controllerCaballo = new ControllerCaballo();
@@ -25,7 +18,6 @@ public class UiController {
     private static final JugadorRepository jugadorRepo = JugadorRepository.getInstance();
     private static final CaballoRepository caballoRepo = CaballoRepository.getInstance();
 
-    // --- MÉTODOS PARA LA INTERFAZ GRÁFICA (Solo DTOs) ---
 
     public static List<CaballoDTO> getCaballosDisponiblesParaUI() {
         return controllerCaballo.listarCaballosParaUI();
@@ -39,10 +31,6 @@ public class UiController {
         return controllerJugador.agregarJugador(nombre, caballoId);
     }
 
-    /**
-     * Actualiza el nombre y el caballo de un jugador dado su posición en la lista.
-     * Recibe datos planos de la UI (Strings), trabaja con entidades JPA internamente.
-     */
     public static void actualizarJugador(int index, String nombre, String caballoId) {
         List<Jugador> jugadoresDB = jugadorRepo.listarJugadores();
 
@@ -51,7 +39,7 @@ public class UiController {
             jugador.setNombre(nombre);
 
             try {
-                // Busca el Caballo real en la BD y establece la relación @ManyToOne
+
                 Caballo caballo = caballoRepo.buscarPorId(Long.parseLong(caballoId));
                 if (caballo != null) {
                     jugador.setCaballo(caballo);
@@ -63,21 +51,10 @@ public class UiController {
         }
     }
 
-    // --- MÉTODOS PARA EL MOTOR DE SIMULACIÓN (Entidades reales) ---
-
-    /**
-     * Devuelve los jugadores como entidades reales para el motor de simulación.
-     * Cada Jugador ya tiene su Caballo cargado via @ManyToOne(EAGER),
-     * por lo que avanzar() y reducirEnergia() están disponibles directamente.
-     */
     public static List<Jugador> getJugadoresModelo() {
         return jugadorRepo.listarJugadores();
     }
 
-    /**
-     * Asigna puntaje a los jugadores según su posición al finalizar.
-     * 1er lugar: 100 pts, 2do lugar: 50 pts, Resto: 10 pts.
-     */
     public static void asignarPuntaje(Map<String, Integer> progresoPorJugador) {
         List<Jugador> jugadores = jugadorRepo.listarJugadores();
 
@@ -100,7 +77,7 @@ public class UiController {
                 } else {
                     jugador.setPuntaje(jugador.getPuntaje() + 10);
                 }
-                jugadorRepo.guardarJugador(jugador); // Actualizamos la base de datos
+                jugadorRepo.guardarJugador(jugador);
             }
         }
     }

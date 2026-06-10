@@ -11,10 +11,6 @@ public class ControllerCaballo {
 
     private final CaballoRepository repository = CaballoRepository.getInstance();
 
-    /**
-     * Convierte las entidades Caballo de la BD en DTOs planos para la UI.
-     * La UI nunca ve entidades JPA directamente.
-     */
     public List<CaballoDTO> listarCaballosParaUI() {
         List<CaballoDTO> listaParaVista = new ArrayList<>();
         List<Caballo> caballosDB = repository.listarCaballos();
@@ -26,8 +22,8 @@ public class ControllerCaballo {
                     c.getEmoji(),
                     c.getVelocidadBase(),
                     c.getResistencia(),
-                    c.getResistencia(), // Energía inicial = resistencia
-                    0.0                 // Distancia inicial = 0
+                    c.getResistencia(),
+                    0.0
             ));
         }
         return listaParaVista;
